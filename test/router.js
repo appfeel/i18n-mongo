@@ -20,10 +20,10 @@ const sendMail = sinon.spy((message, cb) => cb(null, 'Ok'));
 
 describe('router', () => {
     let app;
+    let mw;
 
     before((done) => {
-        const router = new express.Router();
-        const mw = i18nMongo({
+        mw = i18nMongo({
             logger: { info: logInfo, error: logError, warning: logWarning },
             email: {
                 transport: {
@@ -41,13 +41,13 @@ describe('router', () => {
                 .then(() => done())
                 .catch(done);
         });
-        const nlRouter = createRouter(router);
-        app = express();
-        app.use(mw);
-        app.use('/lang', nlRouter);
     });
 
     beforeEach(() => {
+        const i18nRouter = createRouter(new express.Router());
+        app = express();
+        app.use(mw);
+        app.use('/lang', i18nRouter);
         cleanCache();
         logInfo.reset();
         logWarning.reset();
@@ -715,23 +715,28 @@ describe('router', () => {
     });
 
     it('GET /lang throw error', (done) => {
+        const thrownErr = new Error('Super error');
         const langFind = sinon.stub(Lang, 'find', () => ({
             sort: () => ({
-                exec: () => Promise.reject(new Error('Super error')),
+                exec: () => Promise.reject(thrownErr),
             }),
         }));
         const finish = (err) => {
             langFind.restore();
             done(err);
         };
+        // eslint-disable-next-line no-unused-vars
+        app.use((err, req, res, next) => {
+            expect(err).deep.equal(thrownErr);
+            finish();
+        });
         request(app)
             .get('/lang/langs')
             .expect(500)
             .expect('set-cookie', /lang=en; Max-Age=[\d]+; Path=\/; Expires=/)
             .then((res) => {
-                expect(res.body).to.be.an('object').deep.equal({ error: 'Error: Super error' });
+                expect(res.error.message).not.equal('');
             })
-            .then(() => finish())
             .catch(finish);
     });
 
@@ -747,7 +752,11 @@ describe('router', () => {
             missing.restore();
             done(err);
         };
-
+        // eslint-disable-next-line no-unused-vars
+        app.use((err, req, res, next) => {
+            expect(err.toString()).equal('MongoError: Invalid Operation, No operations in bulk');
+            finish();
+        });
         request(app)
             .post('/lang/multi')
             .set('Content-type', 'application/json')
@@ -757,9 +766,8 @@ describe('router', () => {
                 sinon.assert.notCalled(logInfo);
                 sinon.assert.notCalled(sendMail);
                 sinon.assert.notCalled(missing);
-                expect(res.body).an('object').deep.equal({ error: 'MongoError: Invalid Operation, No operations in bulk' });
+                expect(res.error.message).not.equal('');
             })
-            .then(() => finish())
             .catch(finish);
     });
 
@@ -775,7 +783,11 @@ describe('router', () => {
             missing.restore();
             done(err);
         };
-
+        // eslint-disable-next-line no-unused-vars
+        app.use((err, req, res, next) => {
+            expect(err.toString()).equal('MongoError: Invalid Operation, No operations in bulk');
+            finish();
+        });
         request(app)
             .post('/lang')
             .set('Content-type', 'application/json')
@@ -785,7 +797,7 @@ describe('router', () => {
                 sinon.assert.notCalled(logInfo);
                 sinon.assert.notCalled(sendMail);
                 sinon.assert.notCalled(missing);
-                expect(res.body).an('object').deep.equal({ error: 'MongoError: Invalid Operation, No operations in bulk' });
+                expect(res.error.message).not.equal('');
             })
             .then(() => finish())
             .catch(finish);
