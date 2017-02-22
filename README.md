@@ -9,6 +9,12 @@ This README document is under construction
 [![Build Status](https://travis-ci.org/appfeel/i18n-mongo.svg?branch=master)](https://travis-ci.org/appfeel/i18n-mongo)
 [![Coverage Status](https://coveralls.io/repos/github/appfeel/i18n-mongo/badge.svg)](https://coveralls.io/github/appfeel/i18n-mongo)
 
+## Install me
+
+```
+$ npm i i18n-mongo --save
+```
+
 ## How to use it
 
 To create a translatable schema, you can use `localizableModel`:
