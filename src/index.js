@@ -1,7 +1,7 @@
-import createRouter from './router';
+import createRouter, { defaultPaths } from './router';
 import t, { setTranslation } from './t';
 
 export { default } from './i18n-mongo';
 export * from './i18n-mongo';
 export * from './locales';
-export { createRouter, t, setTranslation };
+export { createRouter, defaultPaths, setTranslation, t };

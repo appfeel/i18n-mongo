@@ -2,7 +2,7 @@ import bodyParser from 'body-parser';
 import { getAvailableLangs, Locale, LocaleTypes } from './i18n-mongo';
 import { findByType, missing } from './locales';
 
-const defaultPaths = {
+export const defaultPaths = {
     langs: '/langs',
     clientjs: '/client.js',
     alljson: '/all.json',
