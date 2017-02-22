@@ -1,0 +1,9 @@
+.idea
+**/bower_components/**/*
+**/node_modules/**/*
+build
+dist
+docs
+logs
+scripts
+typings
