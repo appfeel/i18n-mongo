@@ -1,7 +1,21 @@
 language: node_js
+
 node_js:
   - "node"
+
+addons:
+  apt:
+    sources:
+      - mongodb-upstart
+      - mongodb-3.2-precise
+    packages:
+      - mongodb-org-server
+      - mongodb-org-shell
+      - oracle-java8-installer
+
 services:
   - mongodb
+
 after_success:
   - npm run coveralls
+  
