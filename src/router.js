@@ -28,21 +28,21 @@ export default function i18nMongoRouter(router, options) {
     let auth;
 
     if (!opts.auth) {
-        auth = (req, res, next) => next();
+        auth = () => (req, res, next) => next();
     } else {
-        auth = (req, res, next) => opts.auth(req.path, req.method)(req, res, next);
+        auth = path => (req, res, next) => opts.auth(path, req.method)(req, res, next);
     }
 
     router.use(bodyParser.json());
 
     // Get all languages
-    router.get(paths.langs, auth, (req, res) =>
+    router.get(paths.langs, auth(paths.langs), (req, res) =>
         getAvailableLangs()
             .then(res.json.bind(res))
             .catch(throwErr(req, res)));
 
     // Send locales ready for javascript
-    router.get(paths.clientjs, auth, (req, res) =>
+    router.get(paths.clientjs, auth(paths.clientjs), (req, res) =>
         findByType(req.query.type || 'client', req.query.lang || (req.cookies || {}).lang)
             .then((translations) => {
                 const js = `var locales = ${JSON.stringify(translations)};`;
@@ -51,25 +51,25 @@ export default function i18nMongoRouter(router, options) {
             })
             .catch(throwErr(req, res)));
 
-    router.get(paths.alljson, auth, (req, res) =>
+    router.get(paths.alljson, auth(paths.alljson), (req, res) =>
         findByType(req.query.type || 'client', req.query.lang || (req.cookies || {}).lang)
             .then(res.json.bind(res))
             .catch(throwErr(req, res)));
 
-    router.get(paths.missing, auth, (req, res) =>
+    router.get(paths.missing, auth(paths.missing), (req, res) =>
         Locale.find({ 'strings.text': { $in: [''] } })
             .exec()
             .then(res.send.bind(res))
             .catch(throwErr(req, res)));
 
-    router.post(paths.missing, auth, (req, res) =>
+    router.post(paths.missing, auth(paths.missing), (req, res) =>
         missing(Object.assign({}, req.body, req.query))
             .then(res.send.bind(res))
             .catch(throwErr(req, res)));
 
 
     // Admin features: get all locales
-    router.get(paths.admin, auth, (req, res) => {
+    router.get(paths.admin, auth(paths.admin), (req, res) => {
         let promise;
         const query = {};
 
@@ -97,13 +97,13 @@ export default function i18nMongoRouter(router, options) {
             .catch(throwErr(req, res));
     });
 
-    router.get(paths.types, auth, (req, res) =>
+    router.get(paths.types, auth(paths.types), (req, res) =>
         LocaleTypes.find({})
             .then(res.json.bind(res))
             .catch(throwErr(req, res)));
 
     // Create multiple locales at once
-    router.post(paths.multi, auth, (req, res) =>
+    router.post(paths.multi, auth(paths.multi), (req, res) =>
         Locale.collection.insert(req.body, (err, doc) => {
             if (err) {
                 throwErr(req, res)(err);
@@ -113,7 +113,7 @@ export default function i18nMongoRouter(router, options) {
         }));
 
     // Admin features: put locales
-    router.put(paths.multi, auth, (req, res) => {
+    router.put(paths.multi, auth(paths.multi), (req, res) => {
         const promises = [];
         req.body.forEach((locale) => {
             promises.push(updateLocale(locale._id, locale));
@@ -124,7 +124,7 @@ export default function i18nMongoRouter(router, options) {
     });
 
     // Admin features: create locale
-    router.post(paths.root, auth, (req, res) =>
+    router.post(paths.root, auth(paths.root), (req, res) =>
         Locale.collection.insert(req.body, (err, doc) => {
             if (err) {
                 throwErr(req, res)(err);
@@ -134,12 +134,12 @@ export default function i18nMongoRouter(router, options) {
         }));
 
     // Admin features: put locale
-    router.put(paths.id, auth, (req, res) => updateLocale(req.params._id, req.body)
+    router.put(paths.id, auth(paths.id), (req, res) => updateLocale(req.params._id, req.body)
         .then(res.send.bind(res))
         .catch(throwErr(req, res)));
 
     // Admin features: delete locale
-    router.delete(paths.id, auth, (req, res) =>
+    router.delete(paths.id, auth(paths.id), (req, res) =>
         Locale.findOneAndRemove({ _id: req.params._id })
             .exec()
             .then(res.send.bind(res))

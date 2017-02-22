@@ -825,7 +825,7 @@ describe('router auth', () => {
     });
 
     let lastInsert;
-    it('POST /', (done) => {
+    it('POST / authorized', (done) => {
         const app = express();
         const waitForMissing = [];
         const originalMising = locales.missing;
@@ -876,7 +876,7 @@ describe('router auth', () => {
             .catch(finish);
     });
 
-    it('PUT /', (done) => {
+    it('PUT / unauthorized', (done) => {
         const app = express();
         const waitForMissing = [];
         const originalMising = locales.missing;
@@ -907,7 +907,7 @@ describe('router auth', () => {
                 sinon.assert.notCalled(sendMail);
                 sinon.assert.notCalled(missing);
                 sinon.assert.calledOnce(auth);
-                sinon.assert.calledWith(auth, `/${lastInsert[0]._id}`, 'PUT');
+                sinon.assert.calledWith(auth, '/:_id', 'PUT');
                 expect(res.body).an('object').deep.equal({});
                 return Locale.find({ _id: lastInsert[0]._id }).lean().exec();
             })
