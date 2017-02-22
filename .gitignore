@@ -1,15 +1,13 @@
 .DS_Store
 _.*
 .idea
-node_modules
-dist
-.tmp
 .sass-cache
-**/bower_components
-**/node_modules
-typings
+.vscode
+.ssh/
+wiki/
 
 # Temporary
+.tmp
 **/tmp/
 **/temp/
 
@@ -17,6 +15,7 @@ typings
 logs
 *.log
 **/logs/
+npm-debug.log*
 
 # Runtime data
 pids
@@ -32,6 +31,9 @@ coverage
 # Sonar
 **/.sonar
 
+# nyc test coverage
+.nyc_output
+
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
@@ -41,13 +43,19 @@ coverage
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
-# Debug log from npm
-npm-debug.log*
-
-.vscode
-.ssh/
-
-wiki/
-
 # Node transpiled files
 build
+
+# Dependency directories
+node_modules
+jspm_packages
+**/bower_components
+**/node_modules
+typings
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
