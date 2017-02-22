@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "es6"
+    },
+	"exclude": [
+        ".idea",
+        ".vscode",
+        "app",
+		"bower_components",
+        "certs",
+        "dist",
+        "docs",
+		"jspm_packages",
+        "logs",
+		"node_modules",
+        "scripts",
+        "typings",
+        "uploads",
+        "www",
+        "plugins",
+        "platforms",
+		"temp",
+		"tmp"
+	]
+}

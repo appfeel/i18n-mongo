@@ -1,0 +1,26 @@
+[
+    {
+        "strings": [
+            { "lang": "ca", "text": "Cadena per object id 1", "extra": "" },
+            { "lang": "en", "text": "String for object id 1", "extra": "" },
+            { "lang": "es", "text": "Texto para object id 1", "extra": "" }
+        ],
+        "refs": ["ObjectId:1"]
+    },
+    {
+        "strings": [
+            { "lang": "ca", "text": "Cadena per object id 2", "extra": "" },
+            { "lang": "en", "text": "String for object id 2", "extra": "" },
+            { "lang": "es", "text": "Texto para object id 2", "extra": "" }
+        ],
+        "refs": ["ObjectId:2"]
+    },
+    {
+        "strings": [
+            { "lang": "ca", "text": "Cadena per object id 3", "extra": "" },
+            { "lang": "en", "text": "String for object id 3", "extra": "" },
+            { "lang": "es", "text": "Texto para object id 3", "extra": "" }
+        ],
+        "refs": ["ObjectId:3"]
+    }
+]

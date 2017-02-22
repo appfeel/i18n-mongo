@@ -1,0 +1,37 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true,
+    "es6": true,
+    "jquery": true
+  },
+  "ecmaFeatures": {
+    "jsx": true
+  },
+  "rules": {
+    // Strict mode
+    "strict": [2, "never"],
+    // Code style
+    // "indent": [2, 2],
+    "indent": [2, 4, { "SwitchCase": 1, "VariableDeclarator": {"var": 2, "let": 2, "const": 3} }],
+    "quotes": ["error", "single"],
+    "no-underscore-dangle": 0
+  },
+  "ignore": [
+    ".idea",
+    "app",
+    "**/bower_components/**/*",
+    "build",
+    "certs",
+    "dist",
+    "docs",
+    "logs",
+    "**/node_modules/**/*",
+    "scripts",
+    "typings",
+    "uploads"
+  ]
+}

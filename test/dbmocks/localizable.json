@@ -1,0 +1,11 @@
+{
+    "localized": "ObjectId:1",
+    "obj": {
+        "localized": "ObjectId:2"
+    },
+    "arr": [
+        {
+            "localized": "ObjectId:3"
+        }
+    ]
+}

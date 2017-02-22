@@ -1,0 +1,70 @@
+{
+  "name": "i18n-mongo",
+  "version": "1.0.0",
+  "description": "Node language manager with t-function",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run clean && npm run build-babel",
+    "build-babel": "babel lib -d build",
+    "clean": "rimraf build && mkdir build",
+    "cover": "npm run pretest && ./node_modules/.bin/babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/.bin/_mocha -- test/test.js",
+    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
+    "cover-report": "./node_modules/.bin/babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/.bin/_mocha -- test/test.js; opn ./coverage/lcov-report/index.html",
+    "lint": "./node_modules/.bin/eslint 'lib/**/*.js' --ignore-path .eslintignore",
+    "lint-report": "./node_modules/.bin/eslint 'lib/**/*.js' --ignore-path .eslintignore -f ./node_modules/eslint-html-reporter/reporter.js -o logs/eslint-report.html || opn ./logs/eslint-report.html",
+    "plato": "plato -r -d logs/plato -t 'JSObjects' -e .eslintrc lib/ && opn logs/plato/index.html",
+    "prepublish": "npm run lint-report && npm run cover-report && npm run build",
+    "pretest": "nc -zvv localhost 27017 || mongod --fork --logpath /dev/null",
+    "test": "./node_modules/.bin/_mocha test/test.js --timeout 15000 --compilers js:babel-core/register",
+    "posttest": "mongo admin --eval 'db.shutdownServer()' > /dev/null"
+  },
+  "keywords": [
+    "node",
+    "language",
+    "t",
+    "translate",
+    "i18n",
+    "lang",
+    "mongodb",
+    "mongo",
+    "mongoose"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/appfeel/i18n-mongo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appfeel/i18n-mongo/issues"
+  },
+  "homepage": "https://github.com/appfeel/i18n-mongo#readme",
+  "author": "Miquel Martín (AppFeel)",
+  "license": "EUPL-1.1",
+  "devDependencies": {
+    "babel-cli": "6.22.2",
+    "babel-core": "6.22.1",
+    "babel-eslint": "7.1.1",
+    "babel-istanbul": "0.12.1",
+    "babel-preset-es2015": "6.22.0",
+    "babel-preset-stage-0": "6.22.0",
+    "chai": "3.5.0",
+    "eslint": "3.14.0",
+    "eslint-config-airbnb": "14.0.0",
+    "eslint-html-reporter": "0.5.2",
+    "eslint-plugin-import": "2.2.0",
+    "eslint-plugin-jsx-a11y": "3.0.2",
+    "eslint-plugin-react": "6.9.0",
+    "express": "4.14.1",
+    "mocha": "3.2.0",
+    "opn-cli": "3.1.0",
+    "sinon": "1.17.7",
+    "supertest": "3.0.0"
+  },
+  "dependencies": {
+    "body-parser": "1.16.1",
+    "clone": "2.1.0",
+    "handlebars": "4.0.6",
+    "jsobjects": "1.0.10",
+    "moment": "2.17.1",
+    "mongoose": "4.7.7"
+  }
+}
