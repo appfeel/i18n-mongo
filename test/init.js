@@ -1,9 +1,8 @@
-import mongoose from 'mongoose';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
 import i18nMongo from '../src';
-import { getAvailableLangs, initLanguages, Logger, setDbConnection } from '../src/i18n-mongo';
+import { getAvailableLangs, initLanguages, Logger } from '../src/i18n-mongo';
 import { languages } from './mongoMocks';
 
 describe('Initializing i18n-mongo', () => {
@@ -61,20 +60,6 @@ describe('Initializing i18n-mongo', () => {
             },
         });
     });
-
-    it('Db connection should work', () => {
-        i18nMongo({
-            db: mongoose.connection.db,
-        });
-    });
-
-    it('setDbConnection should work', () => {
-        i18nMongo({}, () => {
-            setDbConnection(mongoose.connection.db);
-        });
-    });
-
-
 
     it('Node langoose returns a middleware and works', () => {
         const mw = i18nMongo();

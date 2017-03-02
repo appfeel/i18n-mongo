@@ -2,7 +2,6 @@ import mongoose, { Schema } from 'mongoose';
 import emailer from './emailer';
 import strCache from './strCache';
 
-mongoose.Promise = Promise;
 const LANG_MAX_AGE = 20 * 365 * 24 * 3600 * 1000;
 const langSchema = new Schema({
     lang: String,
@@ -101,10 +100,6 @@ export function initLanguages() {
         });
 }
 
-export function setDbConnection(db) {
-    mongoose.connection.db = db;
-}
-
 /**
  * Called that is called when available languages have been loaded
  *
@@ -143,7 +138,7 @@ export default function i18nMongo(options, callback) {
     });
     const { defaultLanguage, maxAge, isSetCookie, logger, email,
         langModelName, langCookieName, localeModelName, localeTypesModelName,
-        cacheMaxKeys, cacheExpire, db } = Object.assign({
+        cacheMaxKeys, cacheExpire } = Object.assign({
             defaultLanguage: DefaultLanguage,
             maxAge: LANG_MAX_AGE,
             isSetCookie: true,
@@ -168,12 +163,7 @@ export default function i18nMongo(options, callback) {
     }
 
     strCache(cacheMaxKeys, cacheExpire);
-    if (db) {
-        mongoose.connection.db = db;
-        initLanguages().then(() => cb()).catch(cb);
-    } else {
-        cb();
-    }
+    initLanguages().then(() => cb()).catch(cb);
 
     return (req, res, next) => {
         /* eslint-disable no-param-reassign */
