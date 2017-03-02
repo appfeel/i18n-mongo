@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import emailer from './emailer';
 import strCache from './strCache';
 
+mongoose.Promise = Promise;
 const LANG_MAX_AGE = 20 * 365 * 24 * 3600 * 1000;
 const langSchema = new Schema({
     lang: String,

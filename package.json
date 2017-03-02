@@ -15,6 +15,7 @@
     "plato": "plato -r -d logs/plato -t 'JSObjects' -e .eslintrc src/ && opn logs/plato/index.html",
     "prepublish": "npm run lint-report && npm run cover-report && npm run build",
     "pretest": "nc -zvv localhost 27017 || mongod --fork --logpath /dev/null",
+    "stop-mongo": "mongo admin --eval 'db.shutdownServer()' > /dev/null",
     "test": "./node_modules/.bin/_mocha test/test.js --timeout 15000 --compilers js:babel-core/register"
   },
   "keywords": [
