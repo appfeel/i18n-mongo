@@ -101,6 +101,10 @@ export function initLanguages() {
         });
 }
 
+export function setDbConnection(db) {
+    mongoose.connection.db = db;
+}
+
 /**
  * Called that is called when available languages have been loaded
  *
@@ -139,7 +143,7 @@ export default function i18nMongo(options, callback) {
     });
     const { defaultLanguage, maxAge, isSetCookie, logger, email,
         langModelName, langCookieName, localeModelName, localeTypesModelName,
-        cacheMaxKeys, cacheExpire } = Object.assign({
+        cacheMaxKeys, cacheExpire, db } = Object.assign({
             defaultLanguage: DefaultLanguage,
             maxAge: LANG_MAX_AGE,
             isSetCookie: true,
@@ -164,7 +168,12 @@ export default function i18nMongo(options, callback) {
     }
 
     strCache(cacheMaxKeys, cacheExpire);
-    initLanguages().then(() => cb()).catch(cb);
+    if (db) {
+        mongoose.connection.db = db;
+        initLanguages().then(() => cb()).catch(cb);
+    } else {
+        cb();
+    }
 
     return (req, res, next) => {
         /* eslint-disable no-param-reassign */
