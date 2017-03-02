@@ -33,13 +33,15 @@ function getTypeDocAndLocales({ type, text }) {
 /**
  * A locale is composed by the original string (default language)
  * and a set of translations:
- * [ {
- *     strings: [
- *         { lang: '--', text: 'A locale', extra: '' },
- *         { lang: 'ca', text: 'Un local', extra: '' },
- *     ],
- *     refs: ['58a54d35919e4720d84199d5', '58a54d35919e4720d84199d6']
- * } ]
+ *
+ *     [ {
+ *         strings: [
+ *             { lang: '--', text: 'A locale', extra: '' },
+ *             { lang: 'ca', text: 'Un local', extra: '' },
+ *         ],
+ *         refs: ['58a54d35919e4720d84199d5', '58a54d35919e4720d84199d6']
+ *     } ]
+ *
  * Creates an empty translation entry for a locale.
  * Creates too the new locale if it doesn't exist.
  * Does nothing if lang is DefaultLanguage.
@@ -106,7 +108,8 @@ function getLocalizedKeys(schema) {
 /**
  * Save all locales for a document field.
  * The document field must be in the form
- * { _id: '', strings: [ { lang: 'ca', text: 'Text del local', extra: '' }, ... ], refs: [...]}
+ *
+ *     { _id: '', strings: [ { lang: 'ca', text: 'Text del local', extra: '' }, ... ], refs: [...]}
  */
 function saveLocale(original, value) {
     // if (!value) {
@@ -464,16 +467,16 @@ function saveLocalized(Model) {
 }
 
 export function localizableModel(name, schema, collection, skipInit) {
+    schema.pre('remove', function (next) { // eslint-disable-line func-names
+        removeLocales(this._id).then(() => next(), next);
+    });
+
     const Model = mongoose.model(name, schema, collection, skipInit);
 
     Model.localizedKeys = getLocalizedKeys(schema);
     Model.findLocales = findLocales(Model);
     Model.findLocalized = findLocalized(Model);
     Model.saveLocalized = saveLocalized(Model);
-
-    schema.pre('remove', function (next) { // eslint-disable-line func-names
-        removeLocales(this._id).then(() => next(), next);
-    });
 
     return Model;
 }
