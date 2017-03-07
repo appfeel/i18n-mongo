@@ -2,6 +2,8 @@ import mongoose, { Schema } from 'mongoose';
 import emailer from './emailer';
 import strCache from './strCache';
 
+mongoose.Promise = global.Promise;
+
 const LANG_MAX_AGE = 20 * 365 * 24 * 3600 * 1000;
 const langSchema = new Schema({
     lang: String,
@@ -110,6 +112,7 @@ export function initLanguages() {
  * Library entry point. This will find all locales and return the middleware
  * to get language from request.
  *
+ * @param {Object} connection mongoose.connection object
  * @param {Object} [options] options configuration object
  * @param {String} [options.defaultLanguage=en] Default language to use
  * @param {String} [options.defaultLocaleType=document] Default locale type to use for documents
@@ -130,7 +133,7 @@ export function initLanguages() {
  * @param {availableLanguagesCallback} [callback] called when available languages
  * @returns {Function} express middleware function
  */
-export default function i18nMongo(options, callback) {
+export default function i18nMongo(connection, options, callback) {
     const cb = callback || ((err) => {
         if (err) {
             Logger.error(`Error selecting language: ${err}`);
@@ -151,6 +154,7 @@ export default function i18nMongo(options, callback) {
             cacheExpire: 6 * 3600 * 1000, // 6h
         }, options || {});
 
+    mongoose.connection = connection;
     Logger = logger;
     DefaultLanguage = defaultLanguage;
     Lang = mongoose.models[langModelName] || mongoose.model(langModelName, langSchema);
