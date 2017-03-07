@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+import mongoose from 'mongoose';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -14,7 +15,7 @@ describe('Emailer', () => {
     it('Send an email when missingTranslation key invoked, reject when "to" is not specified', (done) => {
         const _sendMail = (message, callback) => callback(null, 'Ok');
         const sendMail = sinon.spy(_sendMail);
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             email: {
                 transport: {
                     sendMail,
@@ -35,7 +36,7 @@ describe('Emailer', () => {
     it('Send an email when missingTranslation key invoked', (done) => {
         const _sendMail = (message, callback) => callback(null, 'Ok');
         const sendMail = sinon.spy(_sendMail);
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             email: {
                 transport: {
                     sendMail,
@@ -67,7 +68,7 @@ describe('Emailer', () => {
     it('Send an email when unknown key invoked', (done) => {
         const _sendMail = (message, callback) => callback(null, 'Ok');
         const sendMail = sinon.spy(_sendMail);
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             email: {
                 transport: {
                     sendMail,
@@ -98,7 +99,7 @@ describe('Emailer', () => {
     it('Send an email when missingTranslation key invoked (more than 10 chars string)', (done) => {
         const _sendMail = (message, callback) => callback(null, 'Ok');
         const sendMail = sinon.spy(_sendMail);
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             email: {
                 transport: {
                     sendMail,
@@ -130,7 +131,7 @@ describe('Emailer', () => {
     it('"from" parameter is accepted', (done) => {
         const _sendMail = (message, callback) => callback(null, 'Ok');
         const sendMail = sinon.spy(_sendMail);
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             email: {
                 transport: {
                     sendMail,
@@ -162,7 +163,7 @@ describe('Emailer', () => {
     it('"X-Laziness-level" parameter is accepted', (done) => {
         const _sendMail = (message, callback) => callback(null, 'Ok');
         const sendMail = sinon.spy(_sendMail);
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             email: {
                 transport: {
                     sendMail,
@@ -198,7 +199,7 @@ describe('Emailer', () => {
     it('sendMail failure rejects the promise', (done) => {
         const _sendMail = (message, callback) => callback('Error');
         const sendMail = sinon.spy(_sendMail);
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             email: {
                 transport: {
                     sendMail,

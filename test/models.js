@@ -6,7 +6,7 @@ import i18nMongo, { LocalizedRefKey } from '../src';
 
 
 describe('Models', () => {
-    i18nMongo();
+    i18nMongo(mongoose.connection);
 
     it('Create mongoose "lang" model', () => {
         expect(mongoose.models).to.have.property('i18nmongolang');
@@ -71,7 +71,7 @@ describe('Models', () => {
 
 
     it('Create mongoose "locale" and "localetypes" models with different name', () => {
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             langModelName: 'customLang',
             localeModelName: 'customLocale',
             localeTypesModelName: 'customLocaleTypes',

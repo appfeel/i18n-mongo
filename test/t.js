@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+import mongoose from 'mongoose';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import handlebars from 'handlebars';
@@ -89,7 +90,7 @@ describe('t', () => {
     let createLanguage;
 
     before(() => {
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             logger: { info: logInfo, error: logError, warning: logWarning },
             email: {
                 transport: {

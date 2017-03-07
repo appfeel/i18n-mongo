@@ -1,4 +1,5 @@
 /* eslint-disable global-require */
+import mongoose from 'mongoose';
 import sinon from 'sinon';
 import request from 'supertest';
 import express from 'express';
@@ -23,7 +24,7 @@ describe('router', () => {
     let mw;
 
     before((done) => {
-        mw = i18nMongo({
+        mw = i18nMongo(mongoose.connection, {
             logger: { info: logInfo, error: logError, warning: logWarning },
             email: {
                 transport: {
@@ -808,7 +809,7 @@ describe('router auth', () => {
     let mw;
 
     before((done) => {
-        mw = i18nMongo({
+        mw = i18nMongo(mongoose.connection, {
             logger: { info: logInfo, error: logError, warning: logWarning },
             email: {
                 transport: {

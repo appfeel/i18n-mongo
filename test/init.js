@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -7,7 +8,7 @@ import { languages } from './mongoMocks';
 
 describe('Initializing i18n-mongo', () => {
     it('Init correctly and default logger works', () => {
-        i18nMongo();
+        i18nMongo(mongoose.connection);
         Logger.log('Hello!');
         Logger.error('Hello!');
         Logger.warning('Hello!');
@@ -18,7 +19,7 @@ describe('Initializing i18n-mongo', () => {
         const logger = {
             log: sinon.spy(),
         };
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             logger,
         });
         Logger.log('Hello!');
@@ -50,7 +51,7 @@ describe('Initializing i18n-mongo', () => {
     });
 
     it('Email initialization should work', () => {
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             email: {
                 transport: {
                     sendMail: () => { },
@@ -62,7 +63,7 @@ describe('Initializing i18n-mongo', () => {
     });
 
     it('Node langoose returns a middleware and works', () => {
-        const mw = i18nMongo();
+        const mw = i18nMongo(mongoose.connection);
         const nextSpy = sinon.spy();
         const cookie = sinon.spy();
         expect(mw).to.be.a('Function');

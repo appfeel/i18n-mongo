@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 // import request from 'supertest';
+import mongoose from 'mongoose';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -13,7 +14,7 @@ describe('Select language', () => {
         const cookie = sinon.spy();
         const req = { headers: {} };
         const res = { cookie };
-        const middleWare = i18nMongo({
+        const middleWare = i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
         }, (err) => {
             if (err) {
@@ -41,7 +42,7 @@ describe('Select language', () => {
         const cookie = sinon.spy();
         const req = { headers: {} };
         const res = { cookie };
-        const middleWare = i18nMongo({
+        const middleWare = i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
             langCookieName: 'custom-name',
         }, (err) => {
@@ -70,7 +71,7 @@ describe('Select language', () => {
         const cookie = sinon.spy();
         const req = { headers: {} };
         const res = { cookie };
-        const middleWare = i18nMongo({
+        const middleWare = i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
             isSetCookie: false,
         }, (err) => {
@@ -95,7 +96,7 @@ describe('Select language', () => {
         const cookie = sinon.spy();
         const req = { headers: {} };
         const res = { cookie };
-        const middleWare = i18nMongo({
+        const middleWare = i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
             defaultLanguage: 'ca',
         }, (err) => {
@@ -128,7 +129,7 @@ describe('Select language', () => {
             },
         };
         const res = { cookie };
-        const middleWare = i18nMongo({
+        const middleWare = i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
         }, (err) => {
             if (err) {
@@ -160,7 +161,7 @@ describe('Select language', () => {
             },
         };
         const res = { cookie };
-        const middleWare = i18nMongo({
+        const middleWare = i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
         }, (err) => {
             if (err) {
@@ -192,7 +193,7 @@ describe('Select language', () => {
             },
         };
         const res = { cookie };
-        const middleWare = i18nMongo({
+        const middleWare = i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
         }, (err) => {
             if (err) {
@@ -224,7 +225,7 @@ describe('Select language', () => {
             },
         };
         const res = { cookie };
-        const middleWare = i18nMongo({
+        const middleWare = i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
         }, (err) => {
             if (err) {
@@ -256,7 +257,7 @@ describe('Select language', () => {
             },
         };
         const res = { cookie };
-        const middleWare = i18nMongo({
+        const middleWare = i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
             defaultLanguage: 'en',
         }, (err) => {
@@ -292,7 +293,7 @@ describe('Select language', () => {
             },
         };
         const res = { cookie };
-        const middleWare = i18nMongo({
+        const middleWare = i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
         }, (err) => {
             if (err) {
@@ -315,7 +316,7 @@ describe('Select language', () => {
 
 describe('Add new language', () => {
     it('Create a new language in database (fr)', (done) => {
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
         }, (err) => {
             if (err) {
@@ -339,7 +340,7 @@ describe('Add new language', () => {
     });
 
     it('Create a new language in database (fr) with displayName', (done) => {
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
         }, (err) => {
             if (err) {
@@ -363,7 +364,7 @@ describe('Add new language', () => {
     });
 
     it('Do not create existing language (ca)', (done) => {
-        i18nMongo({
+        i18nMongo(mongoose.connection, {
             maxAge: LANG_MAX_AGE,
         }, (err) => {
             if (err) {
@@ -391,7 +392,7 @@ describe('Database error', () => {
         const logger = {
             error: sinon.spy(),
         };
-        i18nMongo(); // We need to make a first call in order to be able to stub Lang.find
+        i18nMongo(mongoose.connection); // We need to make a first call in order to be able to stub Lang.find
         const promise = new Promise((resolve) => {
             stub = sinon.stub(Lang, 'find', () => ({
                 exec: () => {
@@ -399,7 +400,7 @@ describe('Database error', () => {
                     return Promise.reject(error);
                 },
             }));
-            i18nMongo({ logger });
+            i18nMongo(mongoose.connection, { logger });
             sinon.assert.calledOnce(stub);
         });
 
