@@ -74,6 +74,12 @@ export function isCached(tHash, lang) {
     return cached[tHash] !== undefined && cached[tHash][lang] !== undefined;
 }
 
+export function removeCached(tHash, lang) {
+    if (isCached(tHash, lang)) {
+        delete cached[tHash][lang];
+    }
+}
+
 export function getCachedTranslation(tHash, lang, templateData) {
     if (isCached(tHash, lang)) {
         cached[tHash][lang].lastRequested = new Date().getTime();

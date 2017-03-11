@@ -1,6 +1,6 @@
 import { hashCode } from './util';
 import { missing } from './locales';
-import { getCachedTranslation, setCachedTranslation, isCached } from './strCache';
+import { getCachedTranslation, isCached, setCachedTranslation, removeCached } from './strCache';
 import { addNewLanguage, Locale, Logger } from './i18n-mongo';
 
 
@@ -139,6 +139,7 @@ export function setTranslation(defaultText, newText, lang) {
                 return locales;
             })
             .then(locales => locales.map((locale) => {
+                const tHash = hashCode(defaultText);
                 const isNotHavinLocale = locale.strings.every((string) => {
                     if (string.lang === lang) {
                         // eslint-disable-next-line no-param-reassign
@@ -155,6 +156,8 @@ export function setTranslation(defaultText, newText, lang) {
                         extra: sCallerName,
                     });
                 }
+
+                removeCached(tHash, lang);
 
                 return locale.save();
             }))
