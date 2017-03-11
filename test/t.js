@@ -576,6 +576,38 @@ describe('t', () => {
             .catch(done);
     });
 
+    it('Update translation for not existing locale, not existing language, remove cached version', (done) => {
+        t('mlocale3', { lang: 'hu' })
+            .then((translation) => {
+                expect(translation).equal('mlocale3');
+                return setTranslation('mlocale3', 'translation', 'hu');
+            })
+            .then((docs) => {
+                expect(docs).to.be.an('array').lengthOf(1);
+                const doc = docs[0];
+                expect(doc.strings).to.be.an('array').lengthOf(3);
+                expect(doc.strings.toObject()).to.deep.equal([
+                    { text: 'mlocale3', lang: '--' },
+                    { text: 'translation', lang: 'ca', extra: 'setTranslation' },
+                    { text: 'translation', lang: 'hu', extra: 'setTranslation' },
+                ]);
+                sinon.assert.notCalled(logError);
+                sinon.assert.notCalled(logInfo);
+                sinon.assert.notCalled(sendMail);
+                sinon.assert.calledOnce(createLanguage);
+                sinon.assert.calledWithExactly(createLanguage,
+                    { lang: 'hu' },
+                    { lang: 'hu', displayName: '' },
+                    { new: true, upsert: true });
+                return t('mlocale3', { lang: 'hu' });
+            })
+            .then((translation) => {
+                expect(translation).equal('translation');
+            })
+            .then(() => done())
+            .catch(done);
+    });
+
     it('Update translation wrong parameters resolves promise', (done) => {
         setTranslation()
             .then((docs) => {
