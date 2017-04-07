@@ -11,8 +11,22 @@ function notifyMissing({ type, text, lang, extra }) {
 }
 
 /**
+ * For a given type returns a promise which resolves to the type
+ * upserting it when not found
+ * @param {Object} data the data to look for
+ * @param {String} data.type the type of the locale
+ * @param {String} data.text the text of the locale in default language
+ * @return {Promise} resolves to the type doc and found locales docs in an array
+ */
+export function getTypeDoc(type) {
+    return LocaleTypes.findAndModify(
+        { type }, [], { $setOnInsert: { type } }, { new: true, upsert: true });
+}
+
+/**
  * For a given text and type returns a promise which
- * resolves to the type and found locales in an array
+ * resolves to the type and found locales in an array,
+ * upserting type when not found
  * @param {Object} data the data to look for
  * @param {String} data.type the type of the locale
  * @param {String} data.text the text of the locale in default language
@@ -20,8 +34,7 @@ function notifyMissing({ type, text, lang, extra }) {
  */
 function getTypeDocAndLocales({ type, text }) {
     // find or create: http://stackoverflow.com/a/16362833/4025963
-    const findTypeDoc = LocaleTypes.findAndModify(
-        { type }, [], { $setOnInsert: { type } }, { new: true, upsert: true });
+    const findTypeDoc = getTypeDoc(type);
     const findDocLocales = findTypeDoc.then(typeDoc => Locale.find({
         refs: typeDoc._id,
         strings: { $elemMatch: { text } },

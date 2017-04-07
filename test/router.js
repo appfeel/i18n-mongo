@@ -508,6 +508,54 @@ describe('router', () => {
             .catch(done);
     });
 
+    it('POST /multi?type=client', (done) => {
+        const waitForMissing = [];
+        const originalMising = locales.missing;
+        const missing = sinon.stub(locales, 'missing', (args) => {
+            const promise = originalMising(args);
+            waitForMissing.push(promise);
+            return promise;
+        });
+        const finish = (err) => {
+            missing.restore();
+            done(err);
+        };
+
+        request(app)
+            .post('/lang/multi?type=client')
+            .set('Content-type', 'application/json')
+            .send([
+                { strings: [{ lang: 'fr', text: 'This is a missing text' }], refs: [] },
+                { strings: [{ lang: 'fr', text: 'Another missing text' }], refs: [] },
+            ])
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+            .then((res) => {
+                sinon.assert.notCalled(logInfo);
+                sinon.assert.notCalled(sendMail);
+                sinon.assert.notCalled(missing);
+                expect(res.body).an('object').all.keys('result', 'ops', 'insertedCount', 'insertedIds');
+                expect(res.body.result).deep.equal({ ok: 1, n: 2 });
+                expect(res.body.ops).an('array').lengthOf(2);
+                expect(res.body.insertedCount).an('number').equal(2);
+                expect(res.body.insertedIds).an('array').lengthOf(2);
+
+                const strings = res.body.ops.map((itm, i) => {
+                    expect(itm._id.toString()).equal(res.body.insertedIds[i].toString());
+                    expect(itm.refs).an('array').lengthOf(1);
+                    return itm.strings;
+                });
+
+                expect(strings).deep.equal([
+                    [{ lang: 'fr', text: 'This is a missing text' }],
+                    [{ lang: 'fr', text: 'Another missing text' }],
+                ]);
+            })
+            .then(() => finish())
+            .catch(finish);
+    });
+
+
     let lastInsert;
     it('POST /multi', (done) => {
         const waitForMissing = [];

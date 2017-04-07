@@ -1,6 +1,6 @@
 import bodyParser from 'body-parser';
 import { getAvailableLangs, Locale, LocaleTypes } from './i18n-mongo';
-import { findByType, missing } from './locales';
+import { findByType, getTypeDoc, missing } from './locales';
 
 export const defaultPaths = {
     langs: '/langs',
@@ -101,14 +101,34 @@ export default function i18nMongoRouter(router, options) {
             .catch(next));
 
     // Create multiple locales at once
-    router.post(paths.multi, auth(paths.multi), (req, res, next) =>
-        Locale.collection.insert(req.body, (err, doc) => {
-            if (err) {
-                next(err);
-            } else {
-                res.send(doc);
-            }
-        }));
+    router.post(paths.multi, auth(paths.multi), (req, res, next) => {
+        const types = {};
+        Promise.resolve()
+            .then(() => {
+                if (req.query.type && !types[req.query.type]) {
+                    return getTypeDoc(req.query.type)
+                        .then(typeDoc => (types[req.query.type] = typeDoc._id));
+                }
+                return Promise.resolve();
+            })
+            .then(() => req.body.map((locale) => {
+                if (req.query.type &&
+                    (!Array.isArray(locale.refs) ||
+                    !locale.refs.includes(types[req.query.type].toString()))
+                ) {
+                    locale.refs = locale.refs || []; // eslint-disable-line no-param-reassign
+                    locale.refs.push(types[req.query.type]);
+                }
+                return locale;
+            }))
+            .then(locales => Locale.collection.insert(locales, (err, doc) => {
+                if (err) {
+                    next(err);
+                } else {
+                    res.send(doc);
+                }
+            }));
+    });
 
     // Admin features: put locales
     router.put(paths.multi, auth(paths.multi), (req, res, next) => {
