@@ -318,17 +318,11 @@ export function findByType(type, lang, options = {}) {
             .limit(1)
             .then((types) => {
                 if (types.length) {
-                    const $match = { 'strings.lang': { $in: ['--', askLang] } };
-                    if (options.isOnlyMissing) {
-                        $match['strings.text'] = { $eq: '' };
-                    } else if (options.isCleanMissing) {
-                        $match['strings.text'] = { $ne: '' };
-                    }
                     return Locale.aggregate(
                         [
                             { $match: { refs: { $eq: types[0]._id } } },
                             { $unwind: '$strings' },
-                            { $match },
+                            { $match: { 'strings.lang': { $in: ['--', askLang] } } },
                             { $group: { _id: '$_id', strings: { $push: '$strings.text' } } },
                         ]);
                 }
@@ -336,8 +330,13 @@ export function findByType(type, lang, options = {}) {
             })
             .then(locales => locales.reduce((translations, locale) => {
                 if (locale.strings.length > 0) {
-                    // eslint-disable-next-line no-param-reassign
-                    translations[locale.strings[0]] = locale.strings[1] || '';
+                    if ((options.isOnlyMissing && locale.strings[1] === '') ||
+                        (options.isCleanMissing && locale.strings[1] !== '') ||
+                        (!options.isOnlyMissing && !options.isCleanMissing)
+                    ) {
+                        // eslint-disable-next-line no-param-reassign
+                        translations[locale.strings[0]] = locale.strings[1] || '';
+                    }
                 }
                 return translations;
             }, {}));
