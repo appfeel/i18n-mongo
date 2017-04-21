@@ -50,7 +50,10 @@ export default function i18nMongoRouter(router, options) {
             .catch(next));
 
     router.get(paths.alljson, auth(paths.alljson), (req, res, next) =>
-        findByType(req.query.type || 'client', req.query.lang || (req.cookies || {}).lang)
+        findByType(req.query.type || 'client', req.query.lang || (req.cookies || {}).lang, {
+            isOnlyMissing: req.query.isOnlyMissing,
+            isCleanMissing: req.query.isCleanMissing,
+        })
             .then(res.json.bind(res))
             .catch(next));
 

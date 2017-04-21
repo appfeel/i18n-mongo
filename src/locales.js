@@ -309,7 +309,7 @@ export function findByRef(ref, lang = '') {
     return query;
 }
 
-export function findByType(type, lang) {
+export function findByType(type, lang, options = {}) {
     const askLang = lang === DefaultLanguage || lang === '--' ? DefaultLanguage : lang || '--';
     if (askLang) {
         return LocaleTypes
@@ -318,11 +318,17 @@ export function findByType(type, lang) {
             .limit(1)
             .then((types) => {
                 if (types.length) {
+                    const $match = { 'strings.lang': { $in: ['--', askLang] } };
+                    if (options.isOnlyMissing) {
+                        $match['strings.text'] = { $eq: '' };
+                    } else if (options.isCleanMissing) {
+                        $match['strings.text'] = { $ne: '' };
+                    }
                     return Locale.aggregate(
                         [
                             { $match: { refs: { $eq: types[0]._id } } },
                             { $unwind: '$strings' },
-                            { $match: { 'strings.lang': { $in: ['--', askLang] } } },
+                            { $match },
                             { $group: { _id: '$_id', strings: { $push: '$strings.text' } } },
                         ]);
                 }
