@@ -81,7 +81,7 @@ function tString(text, options) {
     return promise;
 }
 
-function getCallerName(defaultFrom) {
+function getCallerName() {
     // See http://stackoverflow.com/a/36152335/513570
     // Get function caller name
     const stack = new Error().stack.split('    at ');
@@ -92,7 +92,7 @@ function getCallerName(defaultFrom) {
         }
         return curr;
     }, []);
-    return from[0] || defaultFrom;
+    return from[0] || stack[2].replace(__dirname, '');
 }
 
 /**

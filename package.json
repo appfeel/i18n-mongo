@@ -1,6 +1,6 @@
 {
   "name": "i18n-mongo",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Node language manager with t-function",
   "main": "index.js",
   "scripts": {
