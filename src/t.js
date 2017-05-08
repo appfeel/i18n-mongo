@@ -1,3 +1,4 @@
+import path from 'path';
 import { hashCode } from './util';
 import { missing } from './locales';
 import { getCachedTranslation, isCached, setCachedTranslation, removeCached } from './strCache';
@@ -80,6 +81,20 @@ function tString(text, options) {
     return promise;
 }
 
+function getCallerName(defaultFrom) {
+    // See http://stackoverflow.com/a/36152335/513570
+    // Get function caller name
+    const stack = new Error().stack.split('    at ');
+    const regex = new RegExp(path.dirname(require.main.filename), 'g');
+    const from = stack.slice(3).reduce((curr, v) => {
+        if (!/(^process\._tickCallback|^next \(native\))/g.test(v)) {
+            curr.push(v.replace(/\n/g, '').replace(regex, ''));
+        }
+        return curr;
+    }, []);
+    return from[0] || defaultFrom;
+}
+
 /**
  * Translates text and inserts in database automatically if it does not exist.
  *
@@ -95,15 +110,8 @@ function tString(text, options) {
  * is an array of strings) or rejected with corresponding error
  */
 export default function t(text, options) {
+    const sCallerName = getCallerName();
     let promise;
-    let sCallerName;
-    {
-        // See http://stackoverflow.com/a/36152335/513570
-        // Get function caller name
-        const re = /(\w+)@|at (\w+) \(/g;
-        const aRegexResult = re.exec(new Error().stack);
-        sCallerName = aRegexResult[1] || aRegexResult[2];
-    }
     // eslint-disable-next-line no-param-reassign
     options.extra = options.extra || sCallerName;
 
@@ -118,16 +126,9 @@ export default function t(text, options) {
 }
 
 export function setTranslation(defaultText, newText, lang) {
+    const sCallerName = getCallerName();
     if (defaultText && lang) {
         const query = { strings: { $elemMatch: { text: defaultText, lang: '--' } } };
-        let sCallerName;
-        {
-            // See http://stackoverflow.com/a/36152335/513570
-            // Get function caller name
-            const re = /(\w+)@|at (\w+) \(/g;
-            const aRegexResult = re.exec(new Error().stack);
-            sCallerName = aRegexResult[1] || aRegexResult[2];
-        }
 
         return addNewLanguage(lang)
             .then(() => Locale.find(query))
