@@ -126,6 +126,8 @@ export default function t(text, options) {
 }
 
 export function setTranslation(defaultText, newText, lang) {
+    // needs to be here: otherwise babel puts all this stuff inside another function
+    // and getCallerName can't find correct caller name
     const sCallerName = getCallerName();
     if (defaultText && lang) {
         const query = { strings: { $elemMatch: { text: defaultText, lang: '--' } } };
