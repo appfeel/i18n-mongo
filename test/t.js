@@ -154,7 +154,7 @@ describe('t', () => {
             .then((translation) => {
                 expect(translation).to.be.equal(locTxt);
                 sinon.assert.calledOnce(missing);
-                sinon.assert.calledWithExactly(missing, { type, text: locTxt, lang, extra: 't' });
+                sinon.assert.calledWithExactly(missing, { type, text: locTxt, lang, extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:153:9)' });
                 sinon.assert.calledOnce(createLanguage);
                 sinon.assert.calledWithExactly(createLanguage,
                     { lang },
@@ -172,9 +172,9 @@ describe('t', () => {
                 sinon.assert.calledWithMatch(sendMail, {
                     from: 'me',
                     headers: { 'X-Laziness-level': 1000 },
-                    html: `Missing translation for <strong>${locTxt}</strong><br>Type: ${type}<br>At: <a href="t">t</a><br>Language: ${lang}<br><br>Empty translation has been automatically added, please review them.`,
+                    html: `Missing translation for <strong>${locTxt}</strong><br>Type: ${type}<br>At: <a href="Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:153:9)">Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:153:9)</a><br>Language: ${lang}<br><br>Empty translation has been automatically added, please review them.`,
                     subject: `Missing translation for "${locTxt}"`,
-                    text: `Missing translation for "${locTxt}"\nType: ${type}\nAt: t\nLanguage: ${lang}`,
+                    text: `Missing translation for "${locTxt}"\nType: ${type}\nAt: Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:153:9)\nLanguage: ${lang}`,
                     to: 'me',
                 });
 
@@ -219,7 +219,7 @@ describe('t', () => {
             .then((translation) => {
                 expect(translation).to.be.equal(locTxt);
                 sinon.assert.calledOnce(missing);
-                sinon.assert.calledWithExactly(missing, { type: 'server', text: locTxt, lang, extra: 't' });
+                sinon.assert.calledWithExactly(missing, { type: 'server', text: locTxt, lang, extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:218:9)' });
                 missing.reset();
                 // We must wait for missing to finish: it will insert the locale in db
                 return Promise.all(waitForMissing);
@@ -255,7 +255,7 @@ describe('t', () => {
             .then((translation) => {
                 expect(translation).to.be.equal(locTxt);
                 sinon.assert.calledOnce(missing);
-                sinon.assert.calledWithExactly(missing, { type: 'server', text: locTxt, lang: DefaultLanguage, extra: 't' });
+                sinon.assert.calledWithExactly(missing, { type: 'server', text: locTxt, lang: DefaultLanguage, extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:254:9)' });
                 sinon.assert.calledOnce(createLanguage);
                 sinon.assert.calledWithExactly(createLanguage,
                     { lang: 'en' },
@@ -300,7 +300,7 @@ describe('t', () => {
             .then((translation) => {
                 expect(translation).to.be.equal(compiled);
                 sinon.assert.calledOnce(missing);
-                sinon.assert.calledWithExactly(missing, { type: 'server', text: locTxt, lang, extra: 't' });
+                sinon.assert.calledWithExactly(missing, { type: 'server', text: locTxt, lang, extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:299:9)' });
                 sinon.assert.notCalled(createLanguage);
                 missing.reset();
                 // We must wait for missing to finish: it will insert the locale in db
@@ -336,7 +336,7 @@ describe('t', () => {
         t(locTxt, { lang })
             .then(() => {
                 sinon.assert.calledOnce(missing);
-                sinon.assert.calledWithExactly(missing, { type: 'server', text: locTxt, lang, extra: 't' });
+                sinon.assert.calledWithExactly(missing, { type: 'server', text: locTxt, lang, extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:336:9)' });
                 sinon.assert.notCalled(createLanguage);
                 missing.reset();
                 // We must wait for missing to finish: it will insert the locale in db
@@ -461,7 +461,7 @@ describe('t', () => {
                 expect(doc.strings).to.be.an('array').lengthOf(2);
                 expect(doc.strings.toObject()).to.deep.equal([
                     { text: 'mlocale2', lang: '--' },
-                    { text: 'translation', lang: 'ca', extra: 't' },
+                    { text: 'translation', lang: 'ca', extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:374:9)' },
                 ]);
                 sinon.assert.notCalled(logInfo);
                 sinon.assert.notCalled(sendMail);
@@ -501,8 +501,8 @@ describe('t', () => {
                 expect(doc.strings).to.be.an('array').lengthOf(3);
                 expect(doc.strings.toObject()).to.deep.equal([
                     { text: 'mlocale2', lang: '--' },
-                    { text: 'translation', lang: 'ca', extra: 't' },
-                    { text: 'translation', lang: 'fr', extra: 'setTranslation' },
+                    { text: 'translation', lang: 'ca', extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:374:9)' },
+                    { text: 'translation', lang: 'fr', extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:497:9)' },
                 ]);
                 sinon.assert.notCalled(logInfo);
                 sinon.assert.notCalled(sendMail);
@@ -524,7 +524,7 @@ describe('t', () => {
                 expect(doc.strings).to.be.an('array').lengthOf(2);
                 expect(doc.strings.toObject()).to.deep.equal([
                     { text: 'mlocale3', lang: '--' },
-                    { text: 'translation', lang: 'ca', extra: 'setTranslation' },
+                    { text: 'translation', lang: 'ca', extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:520:9)' },
                 ]);
                 sinon.assert.notCalled(logError);
                 sinon.assert.calledOnce(logInfo);
@@ -533,9 +533,9 @@ describe('t', () => {
                 sinon.assert.calledWithMatch(sendMail, {
                     from: 'me',
                     headers: { 'X-Laziness-level': 1000 },
-                    html: 'Missing translation for <strong>mlocale3</strong><br>Type: server<br>At: <a href="setTranslation">setTranslation</a><br>Language: ca<br><br>Empty translation has been automatically added, please review them.',
+                    html: 'Missing translation for <strong>mlocale3</strong><br>Type: server<br>At: <a href="Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:520:9)">Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:520:9)</a><br>Language: ca<br><br>Empty translation has been automatically added, please review them.',
                     subject: 'Missing translation for "mlocale3"',
-                    text: 'Missing translation for "mlocale3"\nType: server\nAt: setTranslation\nLanguage: ca',
+                    text: 'Missing translation for "mlocale3"\nType: server\nAt: Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:520:9)\nLanguage: ca',
                     to: 'me',
                 });
                 sinon.assert.notCalled(createLanguage);
@@ -552,7 +552,7 @@ describe('t', () => {
                 expect(doc.strings).to.be.an('array').lengthOf(2);
                 expect(doc.strings.toObject()).to.deep.equal([
                     { text: 'mlocale4', lang: '--' },
-                    { text: 'translation', lang: 'ru', extra: 'setTranslation' },
+                    { text: 'translation', lang: 'ru', extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:548:9)' },
                 ]);
                 sinon.assert.notCalled(logError);
                 sinon.assert.calledOnce(logInfo);
@@ -561,9 +561,9 @@ describe('t', () => {
                 sinon.assert.calledWithMatch(sendMail, {
                     from: 'me',
                     headers: { 'X-Laziness-level': 1000 },
-                    html: 'Missing translation for <strong>mlocale4</strong><br>Type: server<br>At: <a href="setTranslation">setTranslation</a><br>Language: ru<br><br>Empty translation has been automatically added, please review them.',
+                    html: 'Missing translation for <strong>mlocale4</strong><br>Type: server<br>At: <a href="Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:548:9)">Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:548:9)</a><br>Language: ru<br><br>Empty translation has been automatically added, please review them.',
                     subject: 'Missing translation for "mlocale4"',
-                    text: 'Missing translation for "mlocale4"\nType: server\nAt: setTranslation\nLanguage: ru',
+                    text: 'Missing translation for "mlocale4"\nType: server\nAt: Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:548:9)\nLanguage: ru',
                     to: 'me',
                 });
                 sinon.assert.calledOnce(createLanguage);
@@ -588,8 +588,8 @@ describe('t', () => {
                 expect(doc.strings).to.be.an('array').lengthOf(3);
                 expect(doc.strings.toObject()).to.deep.equal([
                     { text: 'mlocale3', lang: '--' },
-                    { text: 'translation', lang: 'ca', extra: 'setTranslation' },
-                    { text: 'translation', lang: 'hu', extra: 'setTranslation' },
+                    { text: 'translation', lang: 'ca', extra: 'Context.<anonymous> (/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:520:9)' },
+                    { text: 'translation', lang: 'hu', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/t.js:583:24' },
                 ]);
                 sinon.assert.notCalled(logError);
                 sinon.assert.notCalled(logInfo);

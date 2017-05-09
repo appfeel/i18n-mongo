@@ -56,7 +56,7 @@ function getTypeDocAndLocales({ type, text }) {
  *     } ]
  *
  * Creates an empty translation entry for a locale.
- * Creates too the new locale if it doesn't exist.
+ * Creates the new locale too if it doesn't exist.
  * Does nothing if lang is DefaultLanguage.
  * @param {Object} data the missing translation data:
  * @param {String} data.type the type of the locale

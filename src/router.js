@@ -1,4 +1,5 @@
 import bodyParser from 'body-parser';
+import { Types } from 'mongoose';
 import { getAvailableLangs, Locale, LocaleTypes } from './i18n-mongo';
 import { findByType, getTypeDoc, missing } from './locales';
 
@@ -16,8 +17,60 @@ export const defaultPaths = {
 
 function updateLocale(_id, locale) {
     return Locale
-        .findOneAndUpdate({ _id }, { $set: locale }, { new: true })
-        .exec();
+        .findOneAndUpdate({ _id }, { $set: locale }, { new: true, upsert: true })
+        .lean().exec();
+}
+
+function adminLocales(req, res, next) {
+    const type = req.query.type;
+    Promise.resolve()
+        .then(() => (type ? getTypeDoc(type).then(r => ([r])) : LocaleTypes.find()))
+        .then(typesArr => typesArr.reduce((types, t) => {
+            types.objId[t._id] = t.type; // eslint-disable-line no-param-reassign
+            types.types[t.type] = t._id; // eslint-disable-line no-param-reassign
+            return types;
+        }, { types: {}, objId: {} }))
+        .then(({ types, objId }) => req.body.reduce((work, locale) => {
+            if (!Array.isArray(locale.refs)) {
+                locale.refs = locale.refs || []; // eslint-disable-line no-param-reassign
+            }
+
+            // eslint-disable-next-line no-param-reassign
+            locale.refs = locale.refs.reduce((refs, ref) => {
+                if (objId[ref]) { // ref is an objectId
+                    refs.push(new Types.ObjectId(ref));
+                } else if (types[ref]) { // ref is a type string (ie. 'client')
+                    refs.push(types[ref]);
+                }
+                return refs;
+            }, []);
+
+            if (type && locale.refs.indexOf(types[type]) < 0) {
+                locale.refs.push(types[type]);
+            }
+
+            if (locale._id) {
+                // eslint-disable-next-line no-param-reassign
+                locale._id = new Types.ObjectId(locale._id);
+                work.updates.push(locale);
+            } else {
+                work.inserts.push(locale);
+            }
+            return work;
+        }, { updates: [], inserts: [] }))
+        .then(({ updates, inserts }) => new Promise(resolve =>
+            Locale.collection.insert(inserts, (err, doc) => {
+                if (err) {
+                    resolve({ updates, inserted: err });
+                } else {
+                    resolve({ updates, inserted: doc });
+                }
+            })))
+        .then(({ updates, inserted }) =>
+            Promise.all(updates.map(locale => updateLocale(locale._id, locale)))
+                .then(updated => ({ inserted, updated })))
+        .then(res.send.bind(res))
+        .catch(next);
 }
 
 export default function i18nMongoRouter(router, options) {
@@ -103,56 +156,11 @@ export default function i18nMongoRouter(router, options) {
             .then(res.json.bind(res))
             .catch(next));
 
+    // Admin features: post/put locales
     // Create multiple locales at once
-    router.post(paths.multi, auth(paths.multi), (req, res, next) => {
-        const types = {};
-        Promise.resolve()
-            .then(() => {
-                if (req.query.type && !types[req.query.type]) {
-                    return getTypeDoc(req.query.type)
-                        .then(typeDoc => (types[req.query.type] = typeDoc._id));
-                }
-                return Promise.resolve();
-            })
-            .then(() => req.body.map((locale) => {
-                if (req.query.type &&
-                    (!Array.isArray(locale.refs) ||
-                    !locale.refs.includes(types[req.query.type].toString()))
-                ) {
-                    locale.refs = locale.refs || []; // eslint-disable-line no-param-reassign
-                    locale.refs.push(types[req.query.type]);
-                }
-                return locale;
-            }))
-            .then(locales => Locale.collection.insert(locales, (err, doc) => {
-                if (err) {
-                    next(err);
-                } else {
-                    res.send(doc);
-                }
-            }));
-    });
-
-    // Admin features: put locales
-    router.put(paths.multi, auth(paths.multi), (req, res, next) => {
-        const promises = [];
-        req.body.forEach((locale) => {
-            promises.push(updateLocale(locale._id, locale));
-        });
-        Promise.all(promises)
-            .then(res.send.bind(res))
-            .catch(next);
-    });
-
-    // Admin features: create locale
-    router.post(paths.root, auth(paths.root), (req, res, next) =>
-        Locale.collection.insert(req.body, (err, doc) => {
-            if (err) {
-                next(err);
-            } else {
-                res.send(doc);
-            }
-        }));
+    router.post(paths.root, auth(paths.root), adminLocales);
+    router.put(paths.multi, auth(paths.multi), adminLocales);
+    // router.put(paths.root, auth(paths.root), adminLocales);
 
     // Admin features: put locale
     router.put(paths.id, auth(paths.id), (req, res, next) => updateLocale(req.params._id, req.body)

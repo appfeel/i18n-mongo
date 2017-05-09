@@ -165,7 +165,7 @@ describe('router', () => {
                 expect(lDocs.refs).to.be.an('array').lengthOf(1);
                 expect(lDocs.refs[0]).to.be.an('string');
                 expect(lDocs.strings).to.be.an('array').lengthOf(2);
-                expect(lDocs.strings).deep.equal([{ text: 'default 1', lang: '--' }, { text: '', lang: 'ca', extra: 't' }]);
+                expect(lDocs.strings).deep.equal([{ text: 'default 1', lang: '--' }, { text: '', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:40:29' }]);
             })
             .then(() => done())
             .catch(done);
@@ -222,7 +222,7 @@ describe('router', () => {
                 expect(lDocs.refs).to.be.an('array').lengthOf(1);
                 expect(lDocs.refs[0]).to.be.an('string');
                 expect(lDocs.strings).to.be.an('array').lengthOf(2);
-                expect(lDocs.strings).deep.equal([{ text: 'default 1', lang: '--' }, { text: '', lang: 'ca', extra: 't' }]);
+                expect(lDocs.strings).deep.equal([{ text: 'default 1', lang: '--' }, { text: '', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:40:29' }]);
                 expect(lDocs).to.be.an('object').all.keys(['_id', '__v', 'refs', 'strings']);
 
                 lDocs = res.body[1];
@@ -336,11 +336,11 @@ describe('router', () => {
                 expect(strings).deep.equal([
                     [
                         { text: 'default 1', lang: '--' },
-                        { text: '', lang: 'ca', extra: 't' },
+                        { text: '', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:40:29' },
                     ],
                     [
                         { text: 'default 2', lang: '--' },
-                        { text: 'per defecte2', lang: 'ca', extra: 'setTranslation' },
+                        { text: 'per defecte2', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:41:29' },
                     ],
                     [
                         { text: 'This is a missing text', lang: '--' },
@@ -385,11 +385,11 @@ describe('router', () => {
                 expect(strings).deep.equal([
                     [
                         { text: 'default 1', lang: '--' },
-                        { text: '', lang: 'ca', extra: 't' },
+                        { text: '', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:40:29' },
                     ],
                     [
                         { text: 'default 2', lang: '--' },
-                        { text: 'per defecte2', lang: 'ca', extra: 'setTranslation' },
+                        { text: 'per defecte2', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:41:29' },
                     ],
                     [
                         { text: 'This is a missing text', lang: '--' },
@@ -429,11 +429,11 @@ describe('router', () => {
                 expect(strings).deep.equal([
                     [
                         { text: 'default 1', lang: '--' },
-                        { text: '', lang: 'ca', extra: 't' },
+                        { text: '', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:40:29' },
                     ],
                     [
                         { text: 'default 2', lang: '--' },
-                        { text: 'per defecte2', lang: 'ca', extra: 'setTranslation' },
+                        { text: 'per defecte2', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:41:29' },
                     ],
                     [
                         { text: 'This is a missing text', lang: '--' },
@@ -508,7 +508,7 @@ describe('router', () => {
             .catch(done);
     });
 
-    it('POST /multi?type=client', (done) => {
+    it('POST /?type=client', (done) => {
         const waitForMissing = [];
         const originalMising = locales.missing;
         const missing = sinon.stub(locales, 'missing', (args) => {
@@ -522,7 +522,7 @@ describe('router', () => {
         };
 
         request(app)
-            .post('/lang/multi?type=client')
+            .post('/lang/?type=client')
             .set('Content-type', 'application/json')
             .send([
                 { strings: [{ lang: 'fr', text: 'This is a missing text' }], refs: [] },
@@ -534,14 +534,15 @@ describe('router', () => {
                 sinon.assert.notCalled(logInfo);
                 sinon.assert.notCalled(sendMail);
                 sinon.assert.notCalled(missing);
-                expect(res.body).an('object').all.keys('result', 'ops', 'insertedCount', 'insertedIds');
-                expect(res.body.result).deep.equal({ ok: 1, n: 2 });
-                expect(res.body.ops).an('array').lengthOf(2);
-                expect(res.body.insertedCount).an('number').equal(2);
-                expect(res.body.insertedIds).an('array').lengthOf(2);
+                expect(res.body).an('object').all.keys('inserted', 'updated');
+                expect(res.body.inserted).an('object').all.keys('result', 'ops', 'insertedCount', 'insertedIds');
+                expect(res.body.inserted.result).deep.equal({ ok: 1, n: 2 });
+                expect(res.body.inserted.ops).an('array').lengthOf(2);
+                expect(res.body.inserted.insertedCount).an('number').equal(2);
+                expect(res.body.inserted.insertedIds).an('array').lengthOf(2);
 
-                const strings = res.body.ops.map((itm, i) => {
-                    expect(itm._id.toString()).equal(res.body.insertedIds[i].toString());
+                const strings = res.body.inserted.ops.map((itm, i) => {
+                    expect(itm._id.toString()).equal(res.body.inserted.insertedIds[i].toString());
                     expect(itm.refs).an('array').lengthOf(1);
                     return itm.strings;
                 });
@@ -550,6 +551,7 @@ describe('router', () => {
                     [{ lang: 'fr', text: 'This is a missing text' }],
                     [{ lang: 'fr', text: 'Another missing text' }],
                 ]);
+                expect(res.body.updated).an('array').lengthOf(0);
             })
             .then(() => finish())
             .catch(finish);
@@ -557,7 +559,7 @@ describe('router', () => {
 
 
     let lastInsert;
-    it('POST /multi', (done) => {
+    it('POST /', (done) => {
         const waitForMissing = [];
         const originalMising = locales.missing;
         const missing = sinon.stub(locales, 'missing', (args) => {
@@ -571,7 +573,7 @@ describe('router', () => {
         };
 
         request(app)
-            .post('/lang/multi')
+            .post('/lang/')
             .set('Content-type', 'application/json')
             .send([
                 { strings: [{ lang: 'fr', text: 'This is a missing text' }], refs: [] },
@@ -583,15 +585,16 @@ describe('router', () => {
                 sinon.assert.notCalled(logInfo);
                 sinon.assert.notCalled(sendMail);
                 sinon.assert.notCalled(missing);
-                expect(res.body).an('object').all.keys('result', 'ops', 'insertedCount', 'insertedIds');
-                expect(res.body.result).deep.equal({ ok: 1, n: 2 });
-                expect(res.body.ops).an('array').lengthOf(2);
-                expect(res.body.insertedCount).an('number').equal(2);
-                expect(res.body.insertedIds).an('array').lengthOf(2);
-                lastInsert = res.body.ops;
+                expect(res.body).an('object').all.keys('inserted', 'updated');
+                expect(res.body.inserted).an('object').all.keys('result', 'ops', 'insertedCount', 'insertedIds');
+                expect(res.body.inserted.result).deep.equal({ ok: 1, n: 2 });
+                expect(res.body.inserted.ops).an('array').lengthOf(2);
+                expect(res.body.inserted.insertedCount).an('number').equal(2);
+                expect(res.body.inserted.insertedIds).an('array').lengthOf(2);
+                lastInsert = res.body.inserted.ops;
 
-                const strings = res.body.ops.map((itm, i) => {
-                    expect(itm._id.toString()).equal(res.body.insertedIds[i].toString());
+                const strings = res.body.inserted.ops.map((itm, i) => {
+                    expect(itm._id.toString()).equal(res.body.inserted.insertedIds[i].toString());
                     return itm.strings;
                 });
 
@@ -599,6 +602,7 @@ describe('router', () => {
                     [{ lang: 'fr', text: 'This is a missing text' }],
                     [{ lang: 'fr', text: 'Another missing text' }],
                 ]);
+                expect(res.body.updated).an('array').lengthOf(0);
             })
             .then(() => finish())
             .catch(finish);
@@ -631,8 +635,16 @@ describe('router', () => {
                 sinon.assert.notCalled(sendMail);
                 sinon.assert.notCalled(missing);
 
-                expect(res.body).an('array').lengthOf(2);
-                expect(res.body).deep.equal(lastInsert);
+                expect(res.body).an('object').all.keys('inserted', 'updated');
+
+                expect(res.body).an('object').all.keys('inserted', 'updated');
+                expect(res.body.inserted).an('object').all.keys('name', 'message', 'driver');
+                expect(res.body.inserted.name).equal('MongoError');
+                expect(res.body.inserted.message).equal('Invalid Operation, No operations in bulk');
+                expect(res.body.inserted.driver).equal(true);
+
+                expect(res.body.updated).an('array').lengthOf(2);
+                expect(res.body.updated).deep.equal(lastInsert);
                 return Locale.find({ _id: lastInsert[0]._id }).lean().exec();
             })
             .then((docs) => {
@@ -651,48 +663,48 @@ describe('router', () => {
             .catch(finish);
     });
 
-    it('POST /', (done) => {
-        const waitForMissing = [];
-        const originalMising = locales.missing;
-        const missing = sinon.stub(locales, 'missing', (args) => {
-            const promise = originalMising(args);
-            waitForMissing.push(promise);
-            return promise;
-        });
-        const finish = (err) => {
-            missing.restore();
-            done(err);
-        };
+    // it('POST /', (done) => {
+    //     const waitForMissing = [];
+    //     const originalMising = locales.missing;
+    //     const missing = sinon.stub(locales, 'missing', (args) => {
+    //         const promise = originalMising(args);
+    //         waitForMissing.push(promise);
+    //         return promise;
+    //     });
+    //     const finish = (err) => {
+    //         missing.restore();
+    //         done(err);
+    //     };
 
-        request(app)
-            .post('/lang/')
-            .set('Content-type', 'application/json')
-            .send({ strings: [{ lang: 'fr', text: 'POST / This is a missing text' }], refs: [] })
-            .expect(200)
-            .expect('Content-Type', /application\/json/)
-            .then((res) => {
-                sinon.assert.notCalled(logInfo);
-                sinon.assert.notCalled(sendMail);
-                sinon.assert.notCalled(missing);
-                expect(res.body).an('object').all.keys('result', 'ops', 'insertedCount', 'insertedIds');
-                expect(res.body.result).deep.equal({ ok: 1, n: 1 });
-                expect(res.body.ops).an('array').lengthOf(1);
-                expect(res.body.insertedCount).an('number').equal(1);
-                expect(res.body.insertedIds).an('array').lengthOf(1);
-                lastInsert = res.body.ops;
+    //     request(app)
+    //         .post('/lang/')
+    //         .set('Content-type', 'application/json')
+    //         .send({ strings: [{ lang: 'fr', text: 'POST / This is a missing text' }], refs: [] })
+    //         .expect(200)
+    //         .expect('Content-Type', /application\/json/)
+    //         .then((res) => {
+    //             sinon.assert.notCalled(logInfo);
+    //             sinon.assert.notCalled(sendMail);
+    //             sinon.assert.notCalled(missing);
+    //             expect(res.body).an('object').all.keys('result', 'ops', 'insertedCount', 'insertedIds');
+    //             expect(res.body.result).deep.equal({ ok: 1, n: 1 });
+    //             expect(res.body.ops).an('array').lengthOf(1);
+    //             expect(res.body.insertedCount).an('number').equal(1);
+    //             expect(res.body.insertedIds).an('array').lengthOf(1);
+    //             lastInsert = res.body.ops;
 
-                const strings = res.body.ops.map((itm, i) => {
-                    expect(itm._id.toString()).equal(res.body.insertedIds[i].toString());
-                    return itm.strings;
-                });
+    //             const strings = res.body.ops.map((itm, i) => {
+    //                 expect(itm._id.toString()).equal(res.body.insertedIds[i].toString());
+    //                 return itm.strings;
+    //             });
 
-                expect(strings).deep.equal([
-                    [{ lang: 'fr', text: 'POST / This is a missing text' }],
-                ]);
-            })
-            .then(() => finish())
-            .catch(finish);
-    });
+    //             expect(strings).deep.equal([
+    //                 [{ lang: 'fr', text: 'POST / This is a missing text' }],
+    //             ]);
+    //         })
+    //         .then(() => finish())
+    //         .catch(finish);
+    // });
 
     it('PUT /', (done) => {
         const waitForMissing = [];
@@ -789,7 +801,7 @@ describe('router', () => {
             .catch(finish);
     });
 
-    it('POST /multi throw error', (done) => {
+    it('POST / empty array returns error', (done) => {
         const waitForMissing = [];
         const originalMising = locales.missing;
         const missing = sinon.stub(locales, 'missing', (args) => {
@@ -801,21 +813,22 @@ describe('router', () => {
             missing.restore();
             done(err);
         };
-        // eslint-disable-next-line no-unused-vars
-        app.use((err, req, res, next) => {
-            expect(err.toString()).equal('MongoError: Invalid Operation, No operations in bulk');
-            finish();
-        });
         request(app)
-            .post('/lang/multi')
+            .post('/lang')
             .set('Content-type', 'application/json')
             .send([])
-            .expect(500)
+            .expect(200)
             .then((res) => {
                 sinon.assert.notCalled(logInfo);
                 sinon.assert.notCalled(sendMail);
                 sinon.assert.notCalled(missing);
-                expect(res.error.message).not.equal('');
+                expect(res.body).an('object').all.keys('inserted', 'updated');
+                expect(res.body.inserted).an('object').all.keys('name', 'message', 'driver');
+                expect(res.body.inserted.name).equal('MongoError');
+                expect(res.body.inserted.message).equal('Invalid Operation, No operations in bulk');
+                expect(res.body.inserted.driver).equal(true);
+                expect(res.body.updated).an('array').lengthOf(0);
+                finish();
             })
             .catch(finish);
     });
@@ -832,21 +845,21 @@ describe('router', () => {
             missing.restore();
             done(err);
         };
-        // eslint-disable-next-line no-unused-vars
-        app.use((err, req, res, next) => {
-            expect(err.toString()).equal('MongoError: Invalid Operation, No operations in bulk');
-            finish();
-        });
         request(app)
             .post('/lang')
             .set('Content-type', 'application/json')
             .send([])
-            .expect(500)
+            .expect(200)
             .then((res) => {
                 sinon.assert.notCalled(logInfo);
                 sinon.assert.notCalled(sendMail);
                 sinon.assert.notCalled(missing);
-                expect(res.error.message).not.equal('');
+                expect(res.body).an('object').all.keys('inserted', 'updated');
+                expect(res.body.inserted).an('object').all.keys('name', 'message', 'driver');
+                expect(res.body.inserted.name).equal('MongoError');
+                expect(res.body.inserted.message).equal('Invalid Operation, No operations in bulk');
+                expect(res.body.inserted.driver).equal(true);
+                expect(res.body.updated).an('array').lengthOf(0);
             })
             .then(() => finish())
             .catch(finish);
@@ -908,7 +921,7 @@ describe('router auth', () => {
         request(app)
             .post('/lang/')
             .set('Content-type', 'application/json')
-            .send({ strings: [{ lang: 'fr', text: 'POST / This is a missing text (auth)' }], refs: [] })
+            .send([{ strings: [{ lang: 'fr', text: 'POST / This is a missing text (auth)' }], refs: [] }])
             .expect(200)
             .expect('Content-Type', /application\/json/)
             .then((res) => {
@@ -917,21 +930,24 @@ describe('router auth', () => {
                 sinon.assert.notCalled(missing);
                 sinon.assert.calledOnce(auth);
                 sinon.assert.calledWith(auth, '/', 'POST');
-                expect(res.body).an('object').all.keys('result', 'ops', 'insertedCount', 'insertedIds');
-                expect(res.body.result).deep.equal({ ok: 1, n: 1 });
-                expect(res.body.ops).an('array').lengthOf(1);
-                expect(res.body.insertedCount).an('number').equal(1);
-                expect(res.body.insertedIds).an('array').lengthOf(1);
-                lastInsert = res.body.ops;
+                expect(res.body).an('object').all.keys('inserted', 'updated');
+                expect(res.body.inserted).an('object').all.keys('result', 'ops', 'insertedCount', 'insertedIds');
+                expect(res.body.inserted.result).deep.equal({ ok: 1, n: 1 });
+                expect(res.body.inserted.ops).an('array').lengthOf(1);
+                expect(res.body.inserted.insertedCount).an('number').equal(1);
+                expect(res.body.inserted.insertedIds).an('array').lengthOf(1);
+                lastInsert = res.body.inserted.ops;
 
-                const strings = res.body.ops.map((itm, i) => {
-                    expect(itm._id.toString()).equal(res.body.insertedIds[i].toString());
+                const strings = res.body.inserted.ops.map((itm, i) => {
+                    expect(itm._id.toString()).equal(res.body.inserted.insertedIds[i].toString());
                     return itm.strings;
                 });
 
                 expect(strings).deep.equal([
                     [{ lang: 'fr', text: 'POST / This is a missing text (auth)' }],
                 ]);
+
+                expect(res.body.updated).an('array').lengthOf(0);
             })
             .then(() => finish())
             .catch(finish);
