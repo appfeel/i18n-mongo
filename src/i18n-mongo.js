@@ -177,7 +177,7 @@ export default function i18nMongo(connection, options, callback) {
             // Ex: 'ca,en-UK;q=0.8,fr;q=0.6,es-ES;q=0.4,es;q=0.2'
             const acceptLanguage = (req.headers || {})['accept-language'] || '';
             req.lang = acceptLanguage ? selectLang(acceptLanguage.split(','), defaultLanguage) : defaultLanguage;
-            if (isSetCookie) {
+            if (isSetCookie && !res.headersSent) {
                 res.cookie(langCookieName, req.lang, {
                     maxAge,
                     httpOnly: false,
