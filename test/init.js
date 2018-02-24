@@ -62,7 +62,7 @@ describe('Initializing i18n-mongo', () => {
         });
     });
 
-    it('Node langoose returns a middleware and works', () => {
+    it('i18nMongo returns a middleware and works', () => {
         const mw = i18nMongo(mongoose.connection);
         const nextSpy = sinon.spy();
         const cookie = sinon.spy();

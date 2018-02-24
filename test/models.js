@@ -6,14 +6,16 @@ import i18nMongo, { LocalizedRefKey } from '../src';
 
 
 describe('Models', () => {
-    i18nMongo(mongoose.connection);
+    before((done) => {
+        i18nMongo(mongoose.connection, null, done);
+    });
 
-    it('Create mongoose "lang" model', () => {
+    it('Create mongoose "i18nmongolang" model', () => {
         expect(mongoose.models).to.have.property('i18nmongolang');
         expect(mongoose.models.i18nmongolang.modelName).to.equal('i18nmongolang');
     });
 
-    it('Create mongoose "lang" schema', () => {
+    it('Create mongoose "i18nmongolang" schema', () => {
         expect(mongoose.modelSchemas).to.have.property('i18nmongolang');
         const paths = mongoose.modelSchemas.i18nmongolang.paths;
         expect(paths).to.have.all.keys(['_id', 'lang', 'displayName', '__v']);
@@ -24,12 +26,12 @@ describe('Models', () => {
     });
 
 
-    it('Create mongoose "locale" model', () => {
+    it('Create mongoose "i18nmongolocale" model', () => {
         expect(mongoose.models).to.have.property('i18nmongolocale');
         expect(mongoose.models.i18nmongolocale.modelName).to.equal('i18nmongolocale');
     });
 
-    it('Create mongoose "locale" schema', () => {
+    it('Create mongoose "i18nmongolocale" schema', () => {
         expect(mongoose.modelSchemas).to.have.property('i18nmongolocale');
 
         const paths = mongoose.modelSchemas.i18nmongolocale.paths;
@@ -51,12 +53,12 @@ describe('Models', () => {
     });
 
 
-    it('Create mongoose "localetypes" model', () => {
+    it('Create mongoose "i18nmongolocaletypes" model', () => {
         expect(mongoose.models).to.have.property('i18nmongolocaletypes');
         expect(mongoose.models.i18nmongolocaletypes.modelName).to.equal('i18nmongolocaletypes');
     });
 
-    it('Create mongoose "localetypes" schema', () => {
+    it('Create mongoose "i18nmongolocaletypes" schema', () => {
         expect(mongoose.modelSchemas).to.have.property('i18nmongolocaletypes');
 
         const localetypesSchema = mongoose.modelSchemas.i18nmongolocaletypes;
@@ -70,7 +72,7 @@ describe('Models', () => {
     });
 
 
-    it('Create mongoose "locale" and "localetypes" models with different name', () => {
+    it('Create mongoose "i18nmongolocale" and "i18nmongolocaletypes" models with different name', () => {
         i18nMongo(mongoose.connection, {
             langModelName: 'customLang',
             localeModelName: 'customLocale',
@@ -85,14 +87,7 @@ describe('Models', () => {
     });
 
     it('Create mongoose "localizable" model', () => {
-        expect(mongoose.models).to.have.property('localizable');
-        expect(mongoose.models.localizable.modelName).to.equal('localizable');
-        expect(mongoose.models.localizable).to.have.property('localizedKeys');
-        expect(mongoose.models.localizable.localizedKeys).to.deep.equal(['localized', 'obj.localized', 'arr.*.localized']);
-        expect(mongoose.models.localizable).itself.to.respondTo('findLocales');
-        expect(mongoose.models.localizable).itself.to.respondTo('findLocalized');
-        expect(mongoose.models.localizable).itself.to.respondTo('saveLocalized');
-
+        // Created as we import Localizable from ./mongoMocks.js
         expect(Localizable).to.have.property('modelName');
         expect(Localizable.modelName).to.equal('localizable');
         expect(Localizable).to.have.property('localizedKeys');
@@ -100,6 +95,14 @@ describe('Models', () => {
         expect(Localizable).itself.to.respondTo('findLocales');
         expect(Localizable).itself.to.respondTo('findLocalized');
         expect(Localizable).itself.to.respondTo('saveLocalized');
+
+        expect(mongoose.models).to.have.property('localizable');
+        expect(mongoose.models.localizable.modelName).to.equal('localizable');
+        expect(mongoose.models.localizable).to.have.property('localizedKeys');
+        expect(mongoose.models.localizable.localizedKeys).to.deep.equal(['localized', 'obj.localized', 'arr.*.localized']);
+        expect(mongoose.models.localizable).itself.to.respondTo('findLocales');
+        expect(mongoose.models.localizable).itself.to.respondTo('findLocalized');
+        expect(mongoose.models.localizable).itself.to.respondTo('saveLocalized');
     });
 
     it('Create mongoose "localizable" schema', () => {

@@ -484,6 +484,18 @@ function saveLocalized(Model) {
     };
 }
 
+/**
+ * Creates a localizable model with following properties:
+ *  - localizedKeys: an array with all localized keys
+ *  - findLocales: function that will find all locales for this model
+ *  - findLocalized: function that will find the localized document
+ *  - saveLocalized: function that will save localized document
+ *
+ * @param {String} name Name of the schema to create
+ * @param {Schema} schema mongoose schema definition
+ * @param {String?} collection optional collection name (induced from model name)
+ * @param {Boolean?} skipInit whether to skip initialization from mongoose (defaults to false)
+ */
 export function localizableModel(name, schema, collection, skipInit) {
     schema.pre('remove', function (next) { // eslint-disable-line func-names
         removeLocales(this._id).then(() => next(), next);

@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-expressions */
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { Types } from 'mongoose';
 
 import i18nMongo, { DefaultLanguage, Locale, Lang } from '../src';
 import { Localizable } from './mongoMocks';
