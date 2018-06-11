@@ -330,8 +330,8 @@ export function findByType(type, lang, options = {}) {
             })
             .then(locales => locales.reduce((translations, locale) => {
                 if (locale.strings.length > 0) {
-                    if ((options.isOnlyMissing && locale.strings[1] === '') ||
-                        (options.isCleanMissing && locale.strings[1] !== '') ||
+                    if ((options.isOnlyMissing && !locale.strings[1]) ||
+                        (options.isCleanMissing && locale.strings[1]) ||
                         (!options.isOnlyMissing && !options.isCleanMissing)
                     ) {
                         // eslint-disable-next-line no-param-reassign
