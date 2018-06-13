@@ -71,7 +71,7 @@ const mw = i18nMongo({
         from: 'me@appfeel.com',
         to: 'me@whoiam.com',
     },
-    defaultLanguage: 'en', // Optional
+    defaultLanguage: '--', // Optional, strings in defaultLanguage will not be inserted
 }, (err) => {
     console.log('Available languages loaded and i18n is ready to be used');
 });

@@ -41,7 +41,7 @@ localeTypesSchema.statics.findAndModify = function (query, sort, update, opts, c
 export let Lang;
 export let Locale;
 export let LocaleTypes;
-export let DefaultLanguage = 'en';
+export let DefaultLanguage = '--';
 export let Logger = {
     log: () => { },
     error: () => { },
