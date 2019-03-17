@@ -130,7 +130,7 @@ function saveLocale(original, value) {
     // } else
     if (value._id) {
         // The provided value is itself a locale
-        return Locale.update({ _id: value._id }, { $set: value }).exec()
+        return Locale.updateOne({ _id: value._id }, { $set: value }).exec()
             .then(() => Locale.findOne(value._id));
     } else if (original) {
         // Update original locale with provided values and save it
@@ -147,7 +147,7 @@ function saveLocale(original, value) {
                 original.strings.push(string);
             }
         });
-        return Locale.update({ _id: original._id }, { $set: original }).exec()
+        return Locale.updateOne({ _id: original._id }, { $set: original }).exec()
             .then(() => Locale.findOne(original._id));
         // return original.save();
     }

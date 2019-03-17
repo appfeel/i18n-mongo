@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import emailer from './emailer';
 import strCache from './strCache';
+import connect from './connection';
 
 mongoose.Promise = global.Promise;
 
@@ -133,7 +134,7 @@ export function initLanguages() {
  * @param {availableLanguagesCallback} [callback] called when available languages
  * @returns {Function} express middleware function
  */
-export default function i18nMongo(connection, options, callback) {
+export default function i18nMongo(mongoUri, options, callback) {
     const cb = callback || ((err) => {
         if (err) {
             Logger.error(`Error selecting language: ${err}`);
@@ -141,7 +142,7 @@ export default function i18nMongo(connection, options, callback) {
     });
     const { defaultLanguage, maxAge, isSetCookie, logger, email,
         langModelName, langCookieName, localeModelName, localeTypesModelName,
-        cacheMaxKeys, cacheExpire } = Object.assign({
+        cacheMaxKeys, cacheExpire, mongoOpts } = Object.assign({
             defaultLanguage: DefaultLanguage,
             maxAge: LANG_MAX_AGE,
             isSetCookie: true,
@@ -152,22 +153,28 @@ export default function i18nMongo(connection, options, callback) {
             localeTypesModelName: 'i18nmongolocaletypes',
             cacheMaxKeys: 10000,
             cacheExpire: 6 * 3600 * 1000, // 6h
+            mongoOpts: {},
         }, options || {});
 
-    mongoose.connection = connection;
     Logger = logger;
     DefaultLanguage = defaultLanguage;
-    Lang = mongoose.models[langModelName] || mongoose.model(langModelName, langSchema);
-    Locale = mongoose.models[localeModelName] || mongoose.model(localeModelName, localeSchema);
-    LocaleTypes = mongoose.models[localeTypesModelName]
-        || mongoose.model(localeTypesModelName, localeTypesSchema);
+    strCache(cacheMaxKeys, cacheExpire);
 
     if (email) {
         emailer(email);
     }
 
-    strCache(cacheMaxKeys, cacheExpire);
-    initLanguages().then(() => cb()).catch(cb);
+    connect(mongoUri, mongoOpts)
+        .then(() => {
+            Lang = mongoose.models[langModelName] || mongoose.model(langModelName, langSchema);
+            Locale = mongoose.models[localeModelName] || mongoose.model(localeModelName, localeSchema);
+            LocaleTypes = mongoose.models[localeTypesModelName]
+                || mongoose.model(localeTypesModelName, localeTypesSchema);
+
+            return initLanguages();
+        })
+        .then(() => cb())
+        .catch(cb);
 
     return (req, res, next) => {
         /* eslint-disable no-param-reassign */

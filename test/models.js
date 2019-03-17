@@ -3,11 +3,12 @@ import { expect } from 'chai';
 
 import { Localizable } from './mongoMocks';
 import i18nMongo, { LocalizedRefKey } from '../src';
+import { TEST_URI } from './mongodriver';
 
 
 describe('Models', () => {
     before((done) => {
-        i18nMongo(mongoose.connection, null, done);
+        i18nMongo(TEST_URI, null, done);
     });
 
     it('Create mongoose "i18nmongolang" model', () => {
@@ -73,17 +74,18 @@ describe('Models', () => {
 
 
     it('Create mongoose "i18nmongolocale" and "i18nmongolocaletypes" models with different name', () => {
-        i18nMongo(mongoose.connection, {
+        i18nMongo(TEST_URI, {
             langModelName: 'customLang',
             localeModelName: 'customLocale',
             localeTypesModelName: 'customLocaleTypes',
+        }, () => {
+            expect(mongoose.models).to.have.property('customLang');
+            expect(mongoose.models.customLang.modelName).to.equal('customLang');
+            expect(mongoose.models).to.have.property('customLocale');
+            expect(mongoose.models.customLocale.modelName).to.equal('customLocale');
+            expect(mongoose.models).to.have.property('customLocaleTypes');
+            expect(mongoose.models.customLocaleTypes.modelName).to.equal('customLocaleTypes');
         });
-        expect(mongoose.models).to.have.property('customLang');
-        expect(mongoose.models.customLang.modelName).to.equal('customLang');
-        expect(mongoose.models).to.have.property('customLocale');
-        expect(mongoose.models.customLocale.modelName).to.equal('customLocale');
-        expect(mongoose.models).to.have.property('customLocaleTypes');
-        expect(mongoose.models.customLocaleTypes.modelName).to.equal('customLocaleTypes');
     });
 
     it('Create mongoose "localizable" model', () => {

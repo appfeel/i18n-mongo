@@ -1,11 +1,11 @@
 /* eslint-disable global-require */
-import mongoose from 'mongoose';
 import sinon from 'sinon';
 import request from 'supertest';
 import express from 'express';
 import { expect } from 'chai';
+import { resolve } from 'path';
 
-import { drop, fixtures } from './mongodriver';
+import { drop, fixtures, TEST_URI } from './mongodriver';
 import i18nMongo, { createRouter, Lang, Locale, setTranslation, t } from '../src';
 import * as locales from '../src/locales';
 import { cleanCache } from '../src/strCache';
@@ -24,7 +24,7 @@ describe('router', () => {
     let mw;
 
     before((done) => {
-        mw = i18nMongo(mongoose.connection, {
+        mw = i18nMongo(TEST_URI, {
             logger: { info: logInfo, error: logError, warning: logWarning },
             email: {
                 transport: {
@@ -165,7 +165,9 @@ describe('router', () => {
                 expect(lDocs.refs).to.be.an('array').lengthOf(1);
                 expect(lDocs.refs[0]).to.be.an('string');
                 expect(lDocs.strings).to.be.an('array').lengthOf(2);
-                expect(lDocs.strings).deep.equal([{ text: 'default 1', lang: '--' }, { text: '', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:40:29' }]);
+                expect(lDocs.strings).deep.equal([
+                    { text: 'default 1', lang: '--' },
+                    { text: '', lang: 'ca', extra: `${resolve(__dirname)}/router.js:40:29` }]);
             })
             .then(() => done())
             .catch(done);
@@ -222,7 +224,9 @@ describe('router', () => {
                 expect(lDocs.refs).to.be.an('array').lengthOf(1);
                 expect(lDocs.refs[0]).to.be.an('string');
                 expect(lDocs.strings).to.be.an('array').lengthOf(2);
-                expect(lDocs.strings).deep.equal([{ text: 'default 1', lang: '--' }, { text: '', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:40:29' }]);
+                expect(lDocs.strings).deep.equal([
+                    { text: 'default 1', lang: '--' },
+                    { text: '', lang: 'ca', extra: `${resolve(__dirname)}/router.js:40:29` }]);
                 expect(lDocs).to.be.an('object').all.keys(['_id', '__v', 'refs', 'strings']);
 
                 lDocs = res.body[1];
@@ -336,11 +340,11 @@ describe('router', () => {
                 expect(strings).deep.equal([
                     [
                         { text: 'default 1', lang: '--' },
-                        { text: '', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:40:29' },
+                        { text: '', lang: 'ca', extra: `${resolve(__dirname)}/router.js:40:29` },
                     ],
                     [
                         { text: 'default 2', lang: '--' },
-                        { text: 'per defecte2', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:41:29' },
+                        { text: 'per defecte2', lang: 'ca', extra: `${resolve(__dirname)}/router.js:41:29` },
                     ],
                     [
                         { text: 'This is a missing text', lang: '--' },
@@ -385,11 +389,11 @@ describe('router', () => {
                 expect(strings).deep.equal([
                     [
                         { text: 'default 1', lang: '--' },
-                        { text: '', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:40:29' },
+                        { text: '', lang: 'ca', extra: `${resolve(__dirname)}/router.js:40:29` },
                     ],
                     [
                         { text: 'default 2', lang: '--' },
-                        { text: 'per defecte2', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:41:29' },
+                        { text: 'per defecte2', lang: 'ca', extra: `${resolve(__dirname)}/router.js:41:29` },
                     ],
                     [
                         { text: 'This is a missing text', lang: '--' },
@@ -429,11 +433,11 @@ describe('router', () => {
                 expect(strings).deep.equal([
                     [
                         { text: 'default 1', lang: '--' },
-                        { text: '', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:40:29' },
+                        { text: '', lang: 'ca', extra: `${resolve(__dirname)}/router.js:40:29` },
                     ],
                     [
                         { text: 'default 2', lang: '--' },
-                        { text: 'per defecte2', lang: 'ca', extra: '/Volumes/DATA/AA-AppFeel/libs/i18n-mongo/test/router.js:41:29' },
+                        { text: 'per defecte2', lang: 'ca', extra: `${resolve(__dirname)}/router.js:41:29` },
                     ],
                     [
                         { text: 'This is a missing text', lang: '--' },
@@ -539,7 +543,7 @@ describe('router', () => {
                 expect(res.body.inserted.result).deep.equal({ ok: 1, n: 2 });
                 expect(res.body.inserted.ops).an('array').lengthOf(2);
                 expect(res.body.inserted.insertedCount).an('number').equal(2);
-                expect(res.body.inserted.insertedIds).an('array').lengthOf(2);
+                expect(res.body.inserted.insertedIds).an('object').all.keys('0', '1');
 
                 const strings = res.body.inserted.ops.map((itm, i) => {
                     expect(itm._id.toString()).equal(res.body.inserted.insertedIds[i].toString());
@@ -590,7 +594,7 @@ describe('router', () => {
                 expect(res.body.inserted.result).deep.equal({ ok: 1, n: 2 });
                 expect(res.body.inserted.ops).an('array').lengthOf(2);
                 expect(res.body.inserted.insertedCount).an('number').equal(2);
-                expect(res.body.inserted.insertedIds).an('array').lengthOf(2);
+                expect(res.body.inserted.insertedIds).an('object').all.keys('0', '1');
                 lastInsert = res.body.inserted.ops;
 
                 const strings = res.body.inserted.ops.map((itm, i) => {
@@ -640,7 +644,7 @@ describe('router', () => {
                 expect(res.body).an('object').all.keys('inserted', 'updated');
                 expect(res.body.inserted).an('object').all.keys('name', 'message', 'driver');
                 expect(res.body.inserted.name).equal('MongoError');
-                expect(res.body.inserted.message).equal('Invalid Operation, No operations in bulk');
+                expect(res.body.inserted.message).equal('Invalid Operation, no operations specified');
                 expect(res.body.inserted.driver).equal(true);
 
                 expect(res.body.updated).an('array').lengthOf(2);
@@ -825,7 +829,7 @@ describe('router', () => {
                 expect(res.body).an('object').all.keys('inserted', 'updated');
                 expect(res.body.inserted).an('object').all.keys('name', 'message', 'driver');
                 expect(res.body.inserted.name).equal('MongoError');
-                expect(res.body.inserted.message).equal('Invalid Operation, No operations in bulk');
+                expect(res.body.inserted.message).equal('Invalid Operation, no operations specified');
                 expect(res.body.inserted.driver).equal(true);
                 expect(res.body.updated).an('array').lengthOf(0);
                 finish();
@@ -857,7 +861,7 @@ describe('router', () => {
                 expect(res.body).an('object').all.keys('inserted', 'updated');
                 expect(res.body.inserted).an('object').all.keys('name', 'message', 'driver');
                 expect(res.body.inserted.name).equal('MongoError');
-                expect(res.body.inserted.message).equal('Invalid Operation, No operations in bulk');
+                expect(res.body.inserted.message).equal('Invalid Operation, no operations specified');
                 expect(res.body.inserted.driver).equal(true);
                 expect(res.body.updated).an('array').lengthOf(0);
             })
@@ -870,7 +874,7 @@ describe('router auth', () => {
     let mw;
 
     before((done) => {
-        mw = i18nMongo(mongoose.connection, {
+        mw = i18nMongo(TEST_URI, {
             logger: { info: logInfo, error: logError, warning: logWarning },
             email: {
                 transport: {
@@ -935,7 +939,7 @@ describe('router auth', () => {
                 expect(res.body.inserted.result).deep.equal({ ok: 1, n: 1 });
                 expect(res.body.inserted.ops).an('array').lengthOf(1);
                 expect(res.body.inserted.insertedCount).an('number').equal(1);
-                expect(res.body.inserted.insertedIds).an('array').lengthOf(1);
+                expect(res.body.inserted.insertedIds).an('object').all.keys('0');
                 lastInsert = res.body.inserted.ops;
 
                 const strings = res.body.inserted.ops.map((itm, i) => {

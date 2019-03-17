@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 
 // In the real world it will be better if the production uri comes
 // from an environment variable, instead of being hard coded.
-const PRODUCTION_URI = 'mongodb://127.0.0.1:27017/production';
-const TEST_URI = 'mongodb://127.0.0.1:27017/test-i18nmongo';
+export const PRODUCTION_URI = 'mongodb://127.0.0.1:27017/production';
+export const TEST_URI = 'mongodb://127.0.0.1:27017/test-i18nmongo';
 
 export const MODE_TEST = 'mode_test';
 export const MODE_PRODUCTION = 'mode_production';

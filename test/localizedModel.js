@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-expressions */
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
 import i18nMongo, { DefaultLanguage, Locale, Lang } from '../src';
 import { Localizable } from './mongoMocks';
 import { cleanCache } from '../src/strCache';
+import { TEST_URI } from './mongodriver';
 
 
 describe('Localizable model', () => {
@@ -34,7 +35,7 @@ describe('Localizable model', () => {
 
 
     before((done) => {
-        i18nMongo(mongoose.connection, {
+        i18nMongo(TEST_URI, {
             logger: { info: logInfo, error: logError, warning: logWarning },
             email: {
                 transport: {

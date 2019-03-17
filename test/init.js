@@ -1,14 +1,14 @@
-import mongoose from 'mongoose';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
 import i18nMongo from '../src';
 import { getAvailableLangs, initLanguages, Logger } from '../src/i18n-mongo';
 import { languages } from './mongoMocks';
+import { TEST_URI } from './mongodriver';
 
 describe('Initializing i18n-mongo', () => {
     it('Init correctly and default logger works', () => {
-        i18nMongo(mongoose.connection);
+        i18nMongo(TEST_URI);
         Logger.log('Hello!');
         Logger.error('Hello!');
         Logger.warning('Hello!');
@@ -19,7 +19,7 @@ describe('Initializing i18n-mongo', () => {
         const logger = {
             log: sinon.spy(),
         };
-        i18nMongo(mongoose.connection, {
+        i18nMongo(TEST_URI, {
             logger,
         });
         Logger.log('Hello!');
@@ -51,7 +51,7 @@ describe('Initializing i18n-mongo', () => {
     });
 
     it('Email initialization should work', () => {
-        i18nMongo(mongoose.connection, {
+        i18nMongo(TEST_URI, {
             email: {
                 transport: {
                     sendMail: () => { },
@@ -63,7 +63,7 @@ describe('Initializing i18n-mongo', () => {
     });
 
     it('i18nMongo returns a middleware and works', () => {
-        const mw = i18nMongo(mongoose.connection);
+        const mw = i18nMongo(TEST_URI);
         const nextSpy = sinon.spy();
         const cookie = sinon.spy();
         expect(mw).to.be.a('Function');
@@ -72,6 +72,6 @@ describe('Initializing i18n-mongo', () => {
         mw({}, { cookie }, nextSpy);
         sinon.assert.calledOnce(nextSpy);
         sinon.assert.calledOnce(cookie);
-        sinon.assert.calledWithExactly(cookie, 'lang', 'en', { httpOnly: false, maxAge: 630720000000 });
+        sinon.assert.calledWithExactly(cookie, 'lang', '--', { httpOnly: false, maxAge: 630720000000 });
     });
 });

@@ -12,13 +12,11 @@
     "jsx": true
   },
   "rules": {
-    // Strict mode
     "strict": [2, "never"],
-    // Code style
-    // "indent": [2, 2],
     "indent": [2, 4, { "SwitchCase": 1, "VariableDeclarator": {"var": 2, "let": 2, "const": 3} }],
     "quotes": ["error", "single"],
-    "no-underscore-dangle": 0
+    "no-underscore-dangle": 0,
+    "max-len": ["error", 180]
   },
   "ignore": [
     ".idea",
