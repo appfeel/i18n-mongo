@@ -164,7 +164,16 @@ export default function i18nMongo(mongoUri, options, callback) {
         emailer(email);
     }
 
-    connect(mongoUri, mongoOpts)
+    let promise = Promise.resolve();
+    if (typeof mongoUri === 'string') {
+        promise = connect(mongoUri, mongoOpts);
+    } else {
+        // backwards compatibility:
+        // TODO: testing!
+        mongoose.connection = mongoUri;
+    }
+
+    promise
         .then(() => {
             Lang = mongoose.models[langModelName] || mongoose.model(langModelName, langSchema);
             Locale = mongoose.models[localeModelName] || mongoose.model(localeModelName, localeSchema);
