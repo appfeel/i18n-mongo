@@ -16,8 +16,8 @@ describe('strCache', () => {
         expect(handlebars.helpers).to.have.property('formatDate');
         expect(handlebars.helpers).to.have.property('formatDateTime');
 
-        expect(handlebars.compile('{{formatDate date lang}}')({ date, lang: 'ca' })).to.equal('7 febrer 2017');
-        expect(handlebars.compile('{{formatDateTime date lang}}')({ date, lang: 'ca' })).to.equal('dimarts 7 febrer 2017 9:55');
+        expect(handlebars.compile('{{formatDate date lang}}')({ date, lang: 'ca' })).to.equal('7 de febrer de 2017');
+        expect(handlebars.compile('{{formatDateTime date lang}}')({ date, lang: 'ca' })).to.equal('dimarts 7 de febrer de 2017 a les 9:55');
     });
 
     it('Register a custom helper and get\'s called correctly', () => {

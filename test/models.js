@@ -39,9 +39,7 @@ describe('Models', () => {
 
         expect(paths).to.have.all.keys(['_id', 'strings', 'refs', '__v']);
         expect(paths.strings).to.be.instanceof(Schema.Types.DocumentArray);
-        expect(paths.strings.schema.paths).to.have.all.keys(['_id', 'lang', 'text', 'extra']);
-        expect(paths.strings.schema.paths._id).to.be.instanceof(Schema.Types.Mixed);
-        expect(paths.strings.schema.paths._id.options.type).to.equal(false);
+        expect(paths.strings.schema.paths).to.have.all.keys(['lang', 'text', 'extra']);
         expect(paths.strings.schema.paths.lang).to.be.instanceof(Schema.Types.String);
         expect(paths.strings.schema.paths.text).to.be.instanceof(Schema.Types.String);
         expect(paths.strings.schema.paths.extra).to.be.instanceof(Schema.Types.String);
@@ -124,7 +122,7 @@ describe('Models', () => {
         expect(paths['obj.localized'].options.ref).to.equal(LocalizedRefKey);
 
         expect(paths.arr).to.be.instanceof(Schema.Types.DocumentArray);
-        expect(paths.arr.schema.paths).to.have.all.keys(['_id', 'localized']);
+        expect(paths.arr.schema.paths).to.have.all.keys(['localized']);
         expect(paths.arr.schema.paths.localized).to.be.instanceof(Schema.Types.ObjectId);
 
 

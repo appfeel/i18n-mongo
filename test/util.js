@@ -16,7 +16,8 @@ describe('Util', () => {
     });
 
     describe('formatDate', () => {
-        it('Should format a date with given format and language', () => expect(formatDate(new Date('2017-02-07'), 'ca', 'LL')).to.equal('7 febrer 2017'));
-        it('Should format a long date with given format and language', () => expect(formatDate(new Date('2017-02-07 9:55'), 'ca', 'LLLL')).to.equal('dimarts 7 febrer 2017 9:55'));
+        it('Should format a date with given format and language', () => expect(formatDate(new Date('2017-02-07'), 'ca', 'LL')).to.equal('7 de febrer de 2017'));
+        it('Should format a long date with given format and language', () =>
+            expect(formatDate(new Date('2017-02-07 9:55'), 'ca', 'LLLL')).to.equal('dimarts 7 de febrer de 2017 a les 9:55'));
     });
 });

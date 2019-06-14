@@ -642,9 +642,9 @@ describe('router', () => {
                 expect(res.body).an('object').all.keys('inserted', 'updated');
 
                 expect(res.body).an('object').all.keys('inserted', 'updated');
-                expect(res.body.inserted).an('object').all.keys('name', 'message', 'driver');
+                expect(res.body.inserted).an('object').all.keys('name', 'driver');
                 expect(res.body.inserted.name).equal('MongoError');
-                expect(res.body.inserted.message).equal('Invalid Operation, no operations specified');
+                // expect(res.body.inserted.message).equal('Invalid Operation, no operations specified');
                 expect(res.body.inserted.driver).equal(true);
 
                 expect(res.body.updated).an('array').lengthOf(2);
@@ -827,9 +827,9 @@ describe('router', () => {
                 sinon.assert.notCalled(sendMail);
                 sinon.assert.notCalled(missing);
                 expect(res.body).an('object').all.keys('inserted', 'updated');
-                expect(res.body.inserted).an('object').all.keys('name', 'message', 'driver');
+                expect(res.body.inserted).an('object').all.keys('name', 'driver');
                 expect(res.body.inserted.name).equal('MongoError');
-                expect(res.body.inserted.message).equal('Invalid Operation, no operations specified');
+                // expect(res.body.inserted.message).equal('Invalid Operation, no operations specified');
                 expect(res.body.inserted.driver).equal(true);
                 expect(res.body.updated).an('array').lengthOf(0);
                 finish();
@@ -859,9 +859,9 @@ describe('router', () => {
                 sinon.assert.notCalled(sendMail);
                 sinon.assert.notCalled(missing);
                 expect(res.body).an('object').all.keys('inserted', 'updated');
-                expect(res.body.inserted).an('object').all.keys('name', 'message', 'driver');
+                expect(res.body.inserted).an('object').all.keys('name', 'driver');
                 expect(res.body.inserted.name).equal('MongoError');
-                expect(res.body.inserted.message).equal('Invalid Operation, no operations specified');
+                // expect(res.body.inserted.message).equal('Invalid Operation, no operations specified');
                 expect(res.body.inserted.driver).equal(true);
                 expect(res.body.updated).an('array').lengthOf(0);
             })
