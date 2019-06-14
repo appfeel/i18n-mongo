@@ -1,5 +1,6 @@
 /* eslint-disable global-require */
 import mongoose from 'mongoose';
+import wtfnode from 'wtfnode';
 
 import { connect, drop, fixtures, MODE_TEST } from './mongodriver';
 
@@ -37,4 +38,12 @@ describe('i18n-mongo', () => {
     require('./t'); // Done
     require('./localizedModel'); // Done
     require('./router'); // Done
+
+    after(() => {
+        mongoose.connection.close();
+        setTimeout(() => {
+            wtfnode.dump();
+            process.exit();
+        }, 1000);
+    });
 });

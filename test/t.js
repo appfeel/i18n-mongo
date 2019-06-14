@@ -2,12 +2,12 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
 import handlebars from 'handlebars';
+import { resolve } from 'path';
 
 import i18nMongo, { DefaultLanguage, initLanguages, Lang, Locale, LocaleTypes, t, setTranslation } from '../src';
 import * as locales from '../src/locales';
 import { cleanCache } from '../src/strCache';
 import { TEST_URI } from './mongodriver';
-import { resolve } from 'path';
 
 function testDbLocale(text, type, lang, isShouldExist = true) {
     return Locale.aggregate([
@@ -181,6 +181,7 @@ describe('t', () => {
                 sinon.assert.calledWithMatch(sendMail, {
                     from: 'me',
                     headers: { 'X-Laziness-level': 1000 },
+                    // eslint-disable-next-line max-len
                     html: `Missing translation for <strong>${locTxt}</strong><br>Type: ${type}<br>At: <a href="Context.<anonymous> (${resolve(__dirname)}/t.js:157:9)">Context.<anonymous> (${resolve(__dirname)}/t.js:157:9)</a><br>Language: ${lang}<br><br>Empty translation has been automatically added, please review them.`,
                     subject: `Missing translation for "${locTxt}"`,
                     text: `Missing translation for "${locTxt}"\nType: ${type}\nAt: Context.<anonymous> (${resolve(__dirname)}/t.js:157:9)\nLanguage: ${lang}`,
@@ -563,6 +564,7 @@ describe('t', () => {
                 sinon.assert.calledWithMatch(sendMail, {
                     from: 'me',
                     headers: { 'X-Laziness-level': 1000 },
+                    // eslint-disable-next-line max-len
                     html: `Missing translation for <strong>mlocale3</strong><br>Type: server<br>At: <a href="Context.<anonymous> (${resolve(__dirname)}/t.js:550:9)">Context.<anonymous> (${resolve(__dirname)}/t.js:550:9)</a><br>Language: ca<br><br>Empty translation has been automatically added, please review them.`,
                     subject: 'Missing translation for "mlocale3"',
                     text: `Missing translation for "mlocale3"\nType: server\nAt: Context.<anonymous> (${resolve(__dirname)}/t.js:550:9)\nLanguage: ca`,
@@ -591,6 +593,7 @@ describe('t', () => {
                 sinon.assert.calledWithMatch(sendMail, {
                     from: 'me',
                     headers: { 'X-Laziness-level': 1000 },
+                    // eslint-disable-next-line max-len
                     html: `Missing translation for <strong>mlocale4</strong><br>Type: server<br>At: <a href="Context.<anonymous> (${resolve(__dirname)}/t.js:578:9)">Context.<anonymous> (${resolve(__dirname)}/t.js:578:9)</a><br>Language: ru<br><br>Empty translation has been automatically added, please review them.`,
                     subject: 'Missing translation for "mlocale4"',
                     text: `Missing translation for "mlocale4"\nType: server\nAt: Context.<anonymous> (${resolve(__dirname)}/t.js:578:9)\nLanguage: ru`,

@@ -793,14 +793,17 @@ describe('router', () => {
         // eslint-disable-next-line no-unused-vars
         app.use((err, req, res, next) => {
             expect(err).deep.equal(thrownErr);
-            finish();
+            res.status(500).json({ error: err.message });
         });
         request(app)
             .get('/lang/langs')
             .expect(500)
             .expect('set-cookie', /lang=en; Max-Age=[\d]+; Path=\/; Expires=/)
             .then((res) => {
+                expect(res.body).an('object').all.keys(['error']);
+                expect(res.body.error).equal(thrownErr.message);
                 expect(res.error.message).not.equal('');
+                finish();
             })
             .catch(finish);
     });
