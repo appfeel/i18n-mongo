@@ -430,7 +430,7 @@ describe('t', () => {
     });
 
     it('Get all locales by type and language', (done) => {
-        locales.findByType(type, lang)
+        locales.findLocalesByType(type, lang)
             .then((localeDocs) => {
                 expect(localeDocs).to.deep.equal({ mlocale2: '', mlocale1: '', 'New locale': '' });
             })
@@ -439,7 +439,7 @@ describe('t', () => {
     });
 
     it('Get all locales by type and language (-- language)', (done) => {
-        locales.findByType(type, '--')
+        locales.findLocalesByType(type, '--')
             .then((localeDocs) => {
                 expect(localeDocs).to.deep.equal({ mlocale2: '', mlocale1: '', 'New locale': '' });
             })
@@ -448,7 +448,7 @@ describe('t', () => {
     });
 
     it('Get all locales by type and language (default language)', (done) => {
-        locales.findByType(type, DefaultLanguage)
+        locales.findLocalesByType(type, DefaultLanguage)
             .then((localeDocs) => {
                 expect(localeDocs).to.deep.equal({ mlocale2: '', mlocale1: '', 'New locale': '' });
             })
@@ -457,7 +457,7 @@ describe('t', () => {
     });
 
     it('Get all locales by type and language (language is not existing)', (done) => {
-        locales.findByType(type, 'fr')
+        locales.findLocalesByType(type, 'fr')
             .then((localeDocs) => {
                 expect(localeDocs).to.deep.equal({ mlocale2: '', mlocale1: '', 'New locale': '' });
             })
@@ -466,7 +466,7 @@ describe('t', () => {
     });
 
     it('Get all locales by type (without language)', (done) => {
-        locales.findByType(type)
+        locales.findLocalesByType(type)
             .then((localeDocs) => {
                 expect(localeDocs).to.deep.equal({ mlocale2: '', mlocale1: '', 'New locale': '' });
             })
@@ -475,7 +475,7 @@ describe('t', () => {
     });
 
     it('Get all locales by type and language (not existing type)', (done) => {
-        locales.findByType('not-existing-type', lang)
+        locales.findLocalesByType('not-existing-type', lang)
             .then((localeDocs) => {
                 expect(localeDocs).to.deep.equal({});
             })

@@ -309,40 +309,43 @@ export function findByRef(ref, lang = '') {
     return query;
 }
 
-export function findByType(type, lang, options = {}) {
-    const askLang = lang === DefaultLanguage || lang === '--' ? DefaultLanguage : lang || '--';
+export async function findLocalesByType(type, lang, options = {}) {
+    const askLang = (lang === DefaultLanguage || lang === '--') ? DefaultLanguage : (lang || '--');
+    const { isCleanMissing, isOnlyMissing } = options;
     if (askLang) {
-        return LocaleTypes
-            .find({ type })
-            .lean()
-            .limit(1)
-            .then((types) => {
-                if (types.length) {
-                    return Locale.aggregate(
-                        [
-                            { $match: { refs: { $eq: types[0]._id } } },
-                            { $unwind: '$strings' },
-                            { $match: { 'strings.lang': { $in: ['--', askLang] } } },
-                            { $group: { _id: '$_id', strings: { $push: '$strings.text' } } },
-                        ]);
-                }
-                return Promise.resolve([]);
-            })
-            .then(locales => locales.reduce((translations, locale) => {
-                if (locale.strings.length > 0) {
-                    if ((options.isOnlyMissing && !locale.strings[1]) ||
-                        (options.isCleanMissing && locale.strings[1]) ||
-                        (!options.isOnlyMissing && !options.isCleanMissing)
-                    ) {
-                        // eslint-disable-next-line no-param-reassign
-                        translations[locale.strings[0]] = locale.strings[1] || '';
-                    }
-                }
-                return translations;
-            }, {}));
+        const types = await LocaleTypes.find({ type }).lean().limit(1).exec();
+        let locales = [];
+        if (types.length) {
+            const $match = { refs: types[0]._id };
+            if (isCleanMissing) {
+                $match.strings = { $elemMatch: { lang: askLang, text: { $ne: '' } } };
+            }
+            if (isOnlyMissing) {
+                $match.$or = [
+                    { strings: { $elemMatch: { lang: askLang, text: '' } } },
+                    { 'strings.lang': { $nin: [askLang] } },
+                ];
+            }
+            locales = await Locale.aggregate([
+                { $match },
+                { $unwind: '$strings' },
+                { $match: { 'strings.lang': { $in: ['--', askLang] } } },
+                { $group: { _id: '$_id', strings: { $push: '$strings.text' } } },
+            ]).exec();
+        }
+
+        // translations are a json object in the form:
+        // 'key_text': 'my super translation'
+        return locales.reduce((translations, locale) => {
+            if (locale.strings.length > 0) {
+                // eslint-disable-next-line no-param-reassign
+                translations[locale.strings[0]] = locale.strings[1] || '';
+            }
+            return translations;
+        }, {});
     }
 
-    return Promise.resolve({});
+    return {};
 }
 
 export function removeLocales(docId) {

@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser';
 import { Types } from 'mongoose';
 import { getAvailableLangs, Locale, LocaleTypes } from './i18n-mongo';
-import { findByType, getTypeDoc, missing } from './locales';
+import { findLocalesByType, getTypeDoc, missing } from './locales';
 
 export const defaultPaths = {
     langs: '/langs',
@@ -94,7 +94,7 @@ export default function i18nMongoRouter(router, options) {
 
     // Send locales ready for javascript
     router.get(paths.clientjs, auth(paths.clientjs), (req, res, next) =>
-        findByType(req.query.type || 'client', req.query.lang || (req.cookies || {}).lang)
+        findLocalesByType(req.query.type || 'client', req.query.lang || (req.cookies || {}).lang)
             .then((translations) => {
                 const js = `var locales = ${JSON.stringify(translations)};`;
                 res.setHeader('content-type', 'application/javascript');
@@ -103,7 +103,7 @@ export default function i18nMongoRouter(router, options) {
             .catch(next));
 
     router.get(paths.alljson, auth(paths.alljson), (req, res, next) =>
-        findByType(req.query.type || 'client', req.query.lang || (req.cookies || {}).lang, {
+        findLocalesByType(req.query.type || 'client', req.query.lang || (req.cookies || {}).lang, {
             isOnlyMissing: req.query.isOnlyMissing,
             isCleanMissing: req.query.isCleanMissing,
         })
