@@ -167,7 +167,7 @@ describe('router', () => {
                 expect(lDocs.strings).to.be.an('array').lengthOf(2);
                 expect(lDocs.strings).deep.equal([
                     { text: 'default 1', lang: '--' },
-                    { text: '', lang: 'ca', extra: `${resolve(__dirname)}/router.js:40:29` }]);
+                    { text: '', lang: 'ca', extra: `then.then (${resolve(__dirname)}/router.js:40:29)` }]);
             })
             .then(() => done())
             .catch(done);
@@ -226,7 +226,7 @@ describe('router', () => {
                 expect(lDocs.strings).to.be.an('array').lengthOf(2);
                 expect(lDocs.strings).deep.equal([
                     { text: 'default 1', lang: '--' },
-                    { text: '', lang: 'ca', extra: `${resolve(__dirname)}/router.js:40:29` }]);
+                    { text: '', lang: 'ca', extra: `then.then (${resolve(__dirname)}/router.js:40:29)` }]);
                 expect(lDocs).to.be.an('object').all.keys(['_id', '__v', 'refs', 'strings']);
 
                 lDocs = res.body[1];
@@ -340,11 +340,11 @@ describe('router', () => {
                 expect(strings).deep.equal([
                     [
                         { text: 'default 1', lang: '--' },
-                        { text: '', lang: 'ca', extra: `${resolve(__dirname)}/router.js:40:29` },
+                        { text: '', lang: 'ca', extra: `then.then (${resolve(__dirname)}/router.js:40:29)` },
                     ],
                     [
                         { text: 'default 2', lang: '--' },
-                        { text: 'per defecte2', lang: 'ca', extra: `${resolve(__dirname)}/router.js:41:29` },
+                        { text: 'per defecte2', lang: 'ca', extra: `then.then.then (${resolve(__dirname)}/router.js:41:29)` },
                     ],
                     [
                         { text: 'This is a missing text', lang: '--' },
@@ -389,11 +389,11 @@ describe('router', () => {
                 expect(strings).deep.equal([
                     [
                         { text: 'default 1', lang: '--' },
-                        { text: '', lang: 'ca', extra: `${resolve(__dirname)}/router.js:40:29` },
+                        { text: '', lang: 'ca', extra: `then.then (${resolve(__dirname)}/router.js:40:29)` },
                     ],
                     [
                         { text: 'default 2', lang: '--' },
-                        { text: 'per defecte2', lang: 'ca', extra: `${resolve(__dirname)}/router.js:41:29` },
+                        { text: 'per defecte2', lang: 'ca', extra: `then.then.then (${resolve(__dirname)}/router.js:41:29)` },
                     ],
                     [
                         { text: 'This is a missing text', lang: '--' },
@@ -433,11 +433,11 @@ describe('router', () => {
                 expect(strings).deep.equal([
                     [
                         { text: 'default 1', lang: '--' },
-                        { text: '', lang: 'ca', extra: `${resolve(__dirname)}/router.js:40:29` },
+                        { text: '', lang: 'ca', extra: `then.then (${resolve(__dirname)}/router.js:40:29)` },
                     ],
                     [
                         { text: 'default 2', lang: '--' },
-                        { text: 'per defecte2', lang: 'ca', extra: `${resolve(__dirname)}/router.js:41:29` },
+                        { text: 'per defecte2', lang: 'ca', extra: `then.then.then (${resolve(__dirname)}/router.js:41:29)` },
                     ],
                     [
                         { text: 'This is a missing text', lang: '--' },

@@ -162,7 +162,7 @@ describe('t', () => {
                     type,
                     lang,
                     text: locTxt,
-                    extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:157:9)`,
+                    extra: `Context.done (${resolve(__dirname)}/t.js:157:9)`,
                 });
                 sinon.assert.calledOnce(createLanguage);
                 sinon.assert.calledWithExactly(createLanguage,
@@ -182,9 +182,9 @@ describe('t', () => {
                     from: 'me',
                     headers: { 'X-Laziness-level': 1000 },
                     // eslint-disable-next-line max-len
-                    html: `Missing translation for <strong>${locTxt}</strong><br>Type: ${type}<br>At: <a href="Context.<anonymous> (${resolve(__dirname)}/t.js:157:9)">Context.<anonymous> (${resolve(__dirname)}/t.js:157:9)</a><br>Language: ${lang}<br><br>Empty translation has been automatically added, please review them.`,
+                    html: `Missing translation for <strong>${locTxt}</strong><br>Type: ${type}<br>At: <a href="Context.done (${resolve(__dirname)}/t.js:157:9)">Context.done (${resolve(__dirname)}/t.js:157:9)</a><br>Language: ${lang}<br><br>Empty translation has been automatically added, please review them.`,
                     subject: `Missing translation for "${locTxt}"`,
-                    text: `Missing translation for "${locTxt}"\nType: ${type}\nAt: Context.<anonymous> (${resolve(__dirname)}/t.js:157:9)\nLanguage: ${lang}`,
+                    text: `Missing translation for "${locTxt}"\nType: ${type}\nAt: Context.done (${resolve(__dirname)}/t.js:157:9)\nLanguage: ${lang}`,
                     to: 'me',
                 });
 
@@ -233,7 +233,7 @@ describe('t', () => {
                     type: 'server',
                     text: locTxt,
                     lang,
-                    extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:228:9)`,
+                    extra: `Context.done (${resolve(__dirname)}/t.js:228:9)`,
                 });
                 missing.reset();
                 // We must wait for missing to finish: it will insert the locale in db
@@ -275,7 +275,7 @@ describe('t', () => {
                     text:
                     locTxt,
                     lang: DefaultLanguage,
-                    extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:269:9)`,
+                    extra: `Context.done (${resolve(__dirname)}/t.js:269:9)`,
                 });
                 sinon.assert.calledOnce(createLanguage);
                 sinon.assert.calledWithExactly(createLanguage,
@@ -325,7 +325,7 @@ describe('t', () => {
                     type: 'server',
                     text: locTxt,
                     lang,
-                    extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:320:9)`,
+                    extra: `Context.done (${resolve(__dirname)}/t.js:320:9)`,
                 });
                 sinon.assert.notCalled(createLanguage);
                 missing.reset();
@@ -366,7 +366,7 @@ describe('t', () => {
                     type: 'server',
                     text: locTxt,
                     lang,
-                    extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:362:9)`,
+                    extra: `Context.done (${resolve(__dirname)}/t.js:362:9)`,
                 });
                 sinon.assert.notCalled(createLanguage);
                 missing.reset();
@@ -492,7 +492,7 @@ describe('t', () => {
                 expect(doc.strings).to.be.an('array').lengthOf(2);
                 expect(doc.strings.toObject()).to.deep.equal([
                     { text: 'mlocale2', lang: '--' },
-                    { text: 'translation', lang: 'ca', extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:405:9)` },
+                    { text: 'translation', lang: 'ca', extra: `Context.done (${resolve(__dirname)}/t.js:405:9)` },
                 ]);
                 sinon.assert.notCalled(logInfo);
                 sinon.assert.notCalled(sendMail);
@@ -532,8 +532,8 @@ describe('t', () => {
                 expect(doc.strings).to.be.an('array').lengthOf(3);
                 expect(doc.strings.toObject()).to.deep.equal([
                     { text: 'mlocale2', lang: '--' },
-                    { text: 'translation', lang: 'ca', extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:405:9)` },
-                    { text: 'translation', lang: 'fr', extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:528:9)` },
+                    { text: 'translation', lang: 'ca', extra: `Context.done (${resolve(__dirname)}/t.js:405:9)` },
+                    { text: 'translation', lang: 'fr', extra: `Context.done (${resolve(__dirname)}/t.js:528:9)` },
                 ]);
                 sinon.assert.notCalled(logInfo);
                 sinon.assert.notCalled(sendMail);
@@ -555,7 +555,7 @@ describe('t', () => {
                 expect(doc.strings).to.be.an('array').lengthOf(2);
                 expect(doc.strings.toObject()).to.deep.equal([
                     { text: 'mlocale3', lang: '--' },
-                    { text: 'translation', lang: 'ca', extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:551:9)` },
+                    { text: 'translation', lang: 'ca', extra: `Context.done (${resolve(__dirname)}/t.js:551:9)` },
                 ]);
                 sinon.assert.notCalled(logError);
                 sinon.assert.calledOnce(logInfo);
@@ -565,9 +565,9 @@ describe('t', () => {
                     from: 'me',
                     headers: { 'X-Laziness-level': 1000 },
                     // eslint-disable-next-line max-len
-                    html: `Missing translation for <strong>mlocale3</strong><br>Type: server<br>At: <a href="Context.<anonymous> (${resolve(__dirname)}/t.js:551:9)">Context.<anonymous> (${resolve(__dirname)}/t.js:551:9)</a><br>Language: ca<br><br>Empty translation has been automatically added, please review them.`,
+                    html: `Missing translation for <strong>mlocale3</strong><br>Type: server<br>At: <a href="Context.done (${resolve(__dirname)}/t.js:551:9)">Context.done (${resolve(__dirname)}/t.js:551:9)</a><br>Language: ca<br><br>Empty translation has been automatically added, please review them.`,
                     subject: 'Missing translation for "mlocale3"',
-                    text: `Missing translation for "mlocale3"\nType: server\nAt: Context.<anonymous> (${resolve(__dirname)}/t.js:551:9)\nLanguage: ca`,
+                    text: `Missing translation for "mlocale3"\nType: server\nAt: Context.done (${resolve(__dirname)}/t.js:551:9)\nLanguage: ca`,
                     to: 'me',
                 });
                 sinon.assert.notCalled(createLanguage);
@@ -584,7 +584,7 @@ describe('t', () => {
                 expect(doc.strings).to.be.an('array').lengthOf(2);
                 expect(doc.strings.toObject()).to.deep.equal([
                     { text: 'mlocale4', lang: '--' },
-                    { text: 'translation', lang: 'ru', extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:580:9)` },
+                    { text: 'translation', lang: 'ru', extra: `Context.done (${resolve(__dirname)}/t.js:580:9)` },
                 ]);
                 sinon.assert.notCalled(logError);
                 sinon.assert.calledOnce(logInfo);
@@ -594,9 +594,9 @@ describe('t', () => {
                     from: 'me',
                     headers: { 'X-Laziness-level': 1000 },
                     // eslint-disable-next-line max-len
-                    html: `Missing translation for <strong>mlocale4</strong><br>Type: server<br>At: <a href="Context.<anonymous> (${resolve(__dirname)}/t.js:580:9)">Context.<anonymous> (${resolve(__dirname)}/t.js:580:9)</a><br>Language: ru<br><br>Empty translation has been automatically added, please review them.`,
+                    html: `Missing translation for <strong>mlocale4</strong><br>Type: server<br>At: <a href="Context.done (${resolve(__dirname)}/t.js:580:9)">Context.done (${resolve(__dirname)}/t.js:580:9)</a><br>Language: ru<br><br>Empty translation has been automatically added, please review them.`,
                     subject: 'Missing translation for "mlocale4"',
-                    text: `Missing translation for "mlocale4"\nType: server\nAt: Context.<anonymous> (${resolve(__dirname)}/t.js:580:9)\nLanguage: ru`,
+                    text: `Missing translation for "mlocale4"\nType: server\nAt: Context.done (${resolve(__dirname)}/t.js:580:9)\nLanguage: ru`,
                     to: 'me',
                 });
                 sinon.assert.calledOnce(createLanguage);
@@ -621,8 +621,8 @@ describe('t', () => {
                 expect(doc.strings).to.be.an('array').lengthOf(3);
                 expect(doc.strings.toObject()).to.deep.equal([
                     { text: 'mlocale3', lang: '--' },
-                    { text: 'translation', lang: 'ca', extra: `Context.<anonymous> (${resolve(__dirname)}/t.js:551:9)` },
-                    { text: 'translation', lang: 'hu', extra: `${resolve(__dirname)}/t.js:616:24` },
+                    { text: 'translation', lang: 'ca', extra: `Context.done (${resolve(__dirname)}/t.js:551:9)` },
+                    { text: 'translation', lang: 'hu', extra: `then.translation (${resolve(__dirname)}/t.js:616:24)` },
                 ]);
                 sinon.assert.notCalled(logError);
                 sinon.assert.notCalled(logInfo);
