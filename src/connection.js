@@ -10,27 +10,28 @@ export function setConnection(con) {
 }
 
 export default function connect(mongoUri, options = {}) {
-    return new Promise((resolve, reject) => {
-        if (typeof mongoUri === 'string' && !connection.db) {
+    if (typeof mongoUri === 'string' && !connection.db) {
+        return new Promise((resolve, reject) => {
             const opts = Object.assign({
                 promiseLibrary: Promise,
                 useNewUrlParser: true,
-                // useMongoClient: true, // Unneeded as of mongoose 5.x
             }, options);
             connection = mongoose.connection;
             mongoose.connect(mongoUri, opts, e =>
                 (e ? reject(e) : resolve(connection.db)));
-        } else {
-            const { readyState } = connection;
-            if (readyState === 1 && connection.db) {
-                resolve(connection.db);
-            } else if (readyState === 2) {
-                connection.on('connected', () => resolve(connection.db));
-            } else {
-                reject('Cannot connect to mongo');
-            }
-        }
-    }).then();
+        });
+    } else if (typeof mongoUri !== 'string') {
+        connection = mongoUri;
+    }
+
+    const { readyState } = connection;
+    if (readyState === 1 && connection.db) {
+        return Promise.resolve(connection.db);
+    } else if (readyState === 2) {
+        return new Promise(resolve => connection.on('connected', () => resolve(connection.db)));
+    }
+
+    return Promise.reject(new Error('Cannot connect to mongo'));
 }
 
 export function onceConnected() {
