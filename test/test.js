@@ -1,16 +1,18 @@
 /* eslint-disable global-require */
-import mongoose from 'mongoose';
 import wtfnode from 'wtfnode';
 
 import { connect, drop, fixtures, MODE_TEST } from './mongodriver';
+import { connection } from '../src/connection';
 
 const collections = {
     i18nmongolangs: require('./dbmocks/languages'),
 };
 
-mongoose.models = {};
-mongoose.modelSchemas = {};
-mongoose.Promise = global.Promise;
+if (connection) {
+    connection.models = {};
+    connection.modelSchemas = {};
+    connection.Promise = global.Promise;
+}
 
 // process.on('unhandledRejection', (reason, promise) => {
 //     console.log('Unhadled promise!', reason);
@@ -40,7 +42,7 @@ describe('i18n-mongo', () => {
     require('./router'); // Done
 
     after(() => {
-        mongoose.connection.close();
+        connection.close();
         setTimeout(() => {
             wtfnode.dump();
             process.exit();

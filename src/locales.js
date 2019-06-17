@@ -19,8 +19,8 @@ function notifyMissing({ type, text, lang, extra }) {
  * @return {Promise} resolves to the type doc and found locales docs in an array
  */
 export function getTypeDoc(type) {
-    return LocaleTypes.findAndModify(
-        { type }, [], { $setOnInsert: { type } }, { new: true, upsert: true });
+    return LocaleTypes.findOneAndUpdate(
+        { type }, { $setOnInsert: { type } }, { new: true, upsert: true }).exec();
 }
 
 /**

@@ -503,7 +503,7 @@ describe('router', () => {
             .then((res) => {
                 expect(res.body).to.be.an('array').lengthOf(2);
                 const types = res.body.map((itm) => {
-                    expect(itm).an('object').all.keys(['_id', 'type']);
+                    expect(itm).an('object').all.keys(['_id', '__v', 'type']);
                     return itm.type;
                 });
                 expect(types.sort()).deep.equal(['client', 'server']);

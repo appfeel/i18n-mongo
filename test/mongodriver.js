@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { connection, setConnection } from '../src/connection';
 
 // In the real world it will be better if the production uri comes
 // from an environment variable, instead of being hard coded.
@@ -10,13 +11,14 @@ export const MODE_PRODUCTION = 'mode_production';
 
 export function connect(mode) {
     return new Promise((res, rej) => {
-        if (mongoose.connection.db) {
+        if (connection && connection.db) {
             res();
         } else {
-            mongoose.connect(mode === MODE_TEST ? TEST_URI : PRODUCTION_URI, (err) => {
+            mongoose.connect(mode === MODE_TEST ? TEST_URI : PRODUCTION_URI, { useNewUrlParser: true, useFindAndModify: false }, (err) => {
                 if (err) {
                     rej(err);
                 } else {
+                    setConnection(mongoose.connection);
                     res();
                 }
             });
@@ -25,13 +27,13 @@ export function connect(mode) {
 }
 
 export function drop(collsToDelete = []) {
-    if (!mongoose.connection.db) {
+    if (!connection.db) {
         return Promise.resolve();
     }
 
     return new Promise((resolve, reject) => {
         // This is faster then dropping the database
-        mongoose.connection.db.collections((err, colls) => Promise.all(colls.map((coll) => {
+        connection.db.collections((err, colls) => Promise.all(colls.map((coll) => {
             if (coll.collectionName.indexOf('system') === 0 || (collsToDelete.length && collsToDelete.indexOf(coll.collectionName) < 0)) {
                 return Promise.resolve();
             }
@@ -41,16 +43,16 @@ export function drop(collsToDelete = []) {
 }
 
 export function fixtures(collections) {
-    if (!mongoose.connection.db) {
+    if (!connection.db) {
         return Promise.reject(new Error('Missing database connection.'));
     }
 
     return Promise.all(Object.keys(collections).map(name => new Promise((res, rej) => {
-        mongoose.connection.db.createCollection(name, (err, collection) => {
+        connection.db.createCollection(name, (err, collection) => {
             if (err) {
                 rej(err);
             } else {
-                collection.insert(collections[name], e => (e ? rej(e) : res()));
+                collection.insertMany(collections[name], e => (e ? rej(e) : res()));
             }
         });
     })));

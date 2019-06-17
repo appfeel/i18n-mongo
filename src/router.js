@@ -59,7 +59,7 @@ function adminLocales(req, res, next) {
             return work;
         }, { updates: [], inserts: [] }))
         .then(({ updates, inserts }) => new Promise(resolve =>
-            Locale.collection.insert(inserts, (err, doc) => {
+            Locale.collection.insertMany(inserts, (err, doc) => {
                 if (err) {
                     resolve({ updates, inserted: err });
                 } else {

@@ -98,14 +98,14 @@ function getCallerName() {
 /**
  * Translates text and inserts in database automatically if it does not exist.
  *
- * @param {string|string[]} text The text (string) or texts (array) to be translated
+ * @param {T} text The text (string) or texts (array) to be translated
  * @param {Object} options options configuration object
  * @param {String} options.lang the desired language,
  * @param {String} [options.type=server] type of translation 'client', 'server', etc...
  * @param {String} [options.extra] An extra string to identify where the translation comes from
  * @param {String} [options.templateData] If translation is a handlebars template data
  * to be used in template
- * @returns {Promise.<string, Error>|Promise.<string[], Error>} a promise that will be resolved
+ * @returns {Promise.<T, Error>} a promise that will be resolved
  * with the translated string (if text is just a string) or with an array of strings (if text
  * is an array of strings) or rejected with corresponding error
  */

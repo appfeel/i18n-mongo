@@ -68,7 +68,7 @@ function testDbLocale(text, type, lang, isShouldExist = true) {
                         // ]
                         expect(localeTypesData).to.be.an.array;
                         expect(localeTypesData.length).to.equal(1);
-                        expect(localeTypesData[0]).to.have.all.keys(['_id', 'type']);
+                        expect(localeTypesData[0]).to.have.all.keys(['_id', '__v', 'type']);
                         expect(localeTypesData[0]._id.toString())
                             .to.equal(localesData[0].refs[0].toString());
                         expect(localeTypesData[0].type).to.equal(type);
@@ -669,16 +669,15 @@ describe('t', () => {
 
     it('Remove locale type using default parameters', (done) => {
         // This will remove just one localeType (the first one matched)
-        LocaleTypes.findAndModify(undefined, undefined, undefined, {
-            remove: true,
-        }, (err, typedocs) => {
+        LocaleTypes.findOneAndDelete({}, (err, typedocs) => {
             expect(err).to.be.null;
             expect(typedocs).to.be.an.object;
-            expect(typedocs).to.have.all.keys(['_id', 'type']);
+            expect(typedocs).to.have.all.keys(['_id', '__v', 'type']);
         })
+            .lean()
             .then((typedocs) => {
                 expect(typedocs).to.be.an.object;
-                expect(typedocs).to.have.all.keys(['_id', 'type']);
+                expect(typedocs).to.have.all.keys(['_id', '__v', 'type']);
                 return LocaleTypes.find({ type: typedocs.type }).exec();
             })
             .then((typedocs) => {
