@@ -18,7 +18,7 @@ const localeSchema = new Schema({
         },
     ],
     refs: [Schema.Types.ObjectId],
-});
+}, { strict: false });
 const localeTypesSchema = new Schema({
     type: String,
 });
